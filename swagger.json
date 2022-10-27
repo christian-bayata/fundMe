@@ -1,0 +1,17 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "fund-me",
+    "description": "An API that allows users create accounts, fund their accounts, transfer funds to other's accounts, and withdraw funds from their accounts",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:8000",
+  "basePath": "/",
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"]
+}

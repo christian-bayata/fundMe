@@ -4,7 +4,7 @@
   "main": "app.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --exec app.js"
+    "start": "nodemon server.js"
   },
   "dependencies": {
     "app-root-path": "^3.1.0",
@@ -15,6 +15,7 @@
     "mongodb": "^4.11.0",
     "mongoose": "^6.6.7",
     "morgan": "^1.10.0",
+    "swagger-ui-express": "^4.5.0",
     "winston": "^3.8.2"
   },
   "devDependencies": {
