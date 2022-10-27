@@ -1,8 +1,11 @@
 {
   "name": "fund-me",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "license": "MIT",
+  "scripts": {
+    "start": "nodemon --exec app.js"
+  },
   "dependencies": {
     "app-root-path": "^3.1.0",
     "cors": "^2.8.5",
