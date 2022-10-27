@@ -1,14 +1,9 @@
+const winston = require("winston");
 const ErrorHandler = require("../utils/error-handler");
 
-module.exports = (err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-
-  if (process.env.NODE_ENV === "development") {
-    return res.status(err.statusCode).json({
-      success: false,
-      error: err,
-      errMessage: err.message,
-      stack: err.stack,
-    });
-  }
+module.exports = (error, req, res, next) => {
+  res.locals.message = error.message;
+  res.locals.error = process.env.NODE_ENV === "development" ? error : {};
+  winston.error(`${error.status || 500} - ${error.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+  return ErrorHandler.handle(error, req, res, next);
 };
