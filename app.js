@@ -17,8 +17,8 @@ app.use(express.json());
 app.use(cors());
 
 /* Ping the API to ensure it is running. */
-app.get("/health-check", (req, res) => {
-  return new ErrorHandler("Helath check passed", 200);
+app.get("/health-check", (req, res, next) => {
+  return next(new ErrorHandler("Health check passed", 200));
 });
 
 /* Use the error handling middleware as the last in the middleware stack */
