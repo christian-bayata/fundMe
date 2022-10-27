@@ -9,7 +9,7 @@ process.on("uncaughtException", (err) => {
   console.log("Shutting down due to uncaught exception");
 });
 
-app.listen(port, () => console.log(`Server is running on port ${port} in ${environment} mode`));
+let server = app.listen(port, () => console.log(`Server is running on port ${port} in ${environment} mode`));
 
 //Error handler for unhandled rejections
 process.on("unhandledRejection", (err) => {
@@ -19,3 +19,5 @@ process.on("unhandledRejection", (err) => {
     process.exit(1);
   });
 });
+
+module.exports = server;

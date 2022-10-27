@@ -4,7 +4,8 @@
   "main": "app.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "test": "export NODE_ENV=test && export PORT=5001 && jest --runInBand --coverage --verbose --forceExit --detectOpenHandles"
   },
   "dependencies": {
     "app-root-path": "^3.1.0",
@@ -20,6 +21,8 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "jest": "^29.2.2",
+    "nodemon": "^2.0.20",
+    "supertest": "^6.3.1"
   }
 }
