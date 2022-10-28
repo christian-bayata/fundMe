@@ -1,6 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const Schema = mongoose.Schema;
 
@@ -18,12 +19,6 @@ const UserSchema = new Schema(
     },
     email: {
       type: String,
-      required: true,
-      unique: true,
-      es_indexed: true,
-    },
-    phone: {
-      type: Number,
       required: true,
       unique: true,
       es_indexed: true,
@@ -57,3 +52,7 @@ UserSchema.methods.generateJsonWebToken = function () {
 userSchema.methods.comparePassword = async function (userPassword) {
   return await bcrypt.compare(userPassword, this.password);
 };
+
+/* Creates the user model */
+const User = mongoose.model("User", UserSchema);
+module.exports = User;
