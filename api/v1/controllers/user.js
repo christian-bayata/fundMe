@@ -57,11 +57,6 @@ const userLogin = async (req, res) => {
     /* Format and hash user data for security */
     const protectedData = helper.formatUserData(data);
 
-    // var decr = CryptoJS.AES.decrypt(protectedData, "!@#109Tyuuryfqowp085rjf{}[])_+.//||");
-    // console.log("**********", decr).toString(CryptoJS.enc.Utf8);
-
-    //decr = decr.toString(CryptoJS.enc.Utf8);
-
     return Response.sendSuccess({ res, statusCode: status.CREATED, message: "User successfully logged in", body: { token, data: protectedData } });
   } catch (error) {
     console.log(error);
