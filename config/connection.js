@@ -7,7 +7,7 @@ switch (environment) {
     // Point the database credentials to the production DB here
     connectionString = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
     break;
-  case "testing":
+  case "test":
     connectionString = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.TEST_DB_NAME}`;
     break;
   default:

@@ -1,5 +1,5 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
-
 class Database {
   constructor(connectionString) {
     this.connectionString = connectionString;

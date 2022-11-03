@@ -1,4 +1,4 @@
-const status = require("http-status");
+const status = require("../status-code");
 
 class Response {
   /**
@@ -24,7 +24,7 @@ class Response {
    * @param param0
    * @returns {*}
    */
-  static sendFatalError({ res, statusCode = status.INTERNAL_SERVER_ERROR, message = "Oops, something went wrong", body = {}, error, stack }) {
+  static sendFatalError({ res, statusCode = status.INTERNAL_SERVER_ERROR, message = "Internal server error", body = {}, error, stack }) {
     return res.status(statusCode).send({ message, body, error, stack });
   }
 }

@@ -48,8 +48,19 @@ UserSchema.methods.generateJsonWebToken = function () {
   );
 };
 
+//Hash the password before storing it in the database
+UserSchema.pre("save", async function save(next) {
+  try {
+    if (!this.isModified("password")) return next();
+
+    this.password = await bcrypt.hash(this.password, 10);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 /* Compare password using bcrypt.compare */
-userSchema.methods.comparePassword = async function (userPassword) {
+UserSchema.methods.comparePassword = async function (userPassword) {
   return await bcrypt.compare(userPassword, this.password);
 };
 
