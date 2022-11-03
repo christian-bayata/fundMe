@@ -4,6 +4,7 @@ const Response = require("../../../utils/response");
 const status = require("../../../status-code");
 const _ = require("lodash");
 const helper = require("../../../utils/helper");
+const CryptoJS = require("crypto-js");
 
 /**
  * @Author Edomaruse, Frank
@@ -55,6 +56,11 @@ const userLogin = async (req, res) => {
 
     /* Format and hash user data for security */
     const protectedData = helper.formatUserData(data);
+
+    // var decr = CryptoJS.AES.decrypt(protectedData, "!@#109Tyuuryfqowp085rjf{}[])_+.//||");
+    // console.log("**********", decr).toString(CryptoJS.enc.Utf8);
+
+    //decr = decr.toString(CryptoJS.enc.Utf8);
 
     return Response.sendSuccess({ res, statusCode: status.CREATED, message: "User successfully logged in", body: { token, data: protectedData } });
   } catch (error) {
