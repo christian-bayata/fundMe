@@ -127,5 +127,39 @@ describe("User Controller", () => {
       expect(response.body.message).toMatch(/password/i);
       expect(response.body.message).toMatch(/required/i);
     });
+
+    it("should fail if user is not already signed up", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user@gmail.com",
+          password: await bcrypt.hash("user_password", 10),
+        },
+      ]);
+
+      const badPayload = { email: "user11@gmail.com", password: "user_password" };
+
+      const response = await request(server).post(`${baseURL}/login`).send(badPayload);
+      expect(response.status).toBe(404);
+      expect(response.body.message).toMatch(/Sorry you do not have an account with us/i);
+    });
+
+    it("should fail if password does not match", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user@gmail.com",
+          password: await bcrypt.hash("user_password", 10),
+        },
+      ]);
+
+      const badPayload = { email: "user@gmail.com", password: "user123_password" };
+
+      const response = await request(server).post(`${baseURL}/login`).send(badPayload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/Incorrect password/i);
+    });
   });
 });

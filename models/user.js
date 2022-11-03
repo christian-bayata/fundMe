@@ -48,7 +48,7 @@ UserSchema.methods.generateJsonWebToken = function () {
   );
 };
 
-//Hash the password before storing it in the database
+/* Hash the password before storing it in the database */
 UserSchema.pre("save", async function save(next) {
   try {
     if (!this.isModified("password")) return next();
