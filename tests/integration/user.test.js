@@ -108,4 +108,24 @@ describe("User Controller", () => {
       expect(response.body.message).toMatch(/successfully signed/i);
     });
   });
+
+  describe("Login an already signed up user", () => {
+    it("should fail if email is mising", async () => {
+      const badPayload = { password: "user_password" };
+
+      const response = await request(server).post(`${baseURL}/login`).send(badPayload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/email/i);
+      expect(response.body.message).toMatch(/required/i);
+    });
+
+    it("should fail if password is mising", async () => {
+      const badPayload = { email: "user@gmail.com" };
+
+      const response = await request(server).post(`${baseURL}/login`).send(badPayload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/password/i);
+      expect(response.body.message).toMatch(/required/i);
+    });
+  });
 });

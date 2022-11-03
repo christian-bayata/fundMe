@@ -6,4 +6,6 @@ const userRouter = Router();
 
 userRouter.post("/signup", userMiddleware.signupValidation, userController.userSignUp);
 
+userRouter.post("/login", userMiddleware.loginValidation, userController.userLogin);
+
 module.exports = userRouter;
