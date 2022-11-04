@@ -4,7 +4,7 @@ const Response = require("../../../utils/response");
 const status = require("../../../status-code");
 const _ = require("lodash");
 const helper = require("../../../utils/helper");
-const CryptoJS = require("crypto-js");
+const crypto = require("crypto");
 
 /**
  * @Author Edomaruse, Frank
@@ -57,7 +57,37 @@ const userLogin = async (req, res) => {
     /* Format and hash user data for security */
     const protectedData = helper.formatUserData(data);
 
-    return Response.sendSuccess({ res, statusCode: status.CREATED, message: "User successfully logged in", body: { token, data: protectedData } });
+    return Response.sendSuccess({ res, statusCode: status.OK, message: "User successfully logged in", body: { token, data: protectedData } });
+  } catch (error) {
+    // console.log(error);
+    return Response.sendFatalError({ res });
+  }
+};
+
+/**
+ * @Responsibility: Provide user with password reset token
+ *
+ * @param req
+ * @param res
+ * @returns {Promise<*>}
+ */
+
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const userExists = await userRepository.findUserByEmail(email);
+    if (!userExists) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Sorry you do not have an account with us. Please sign up" });
+
+    //Create reset password url
+    const token = crypto.randomBytes(3).toString("hex").toUpperCase();
+    const resetUrl = `${req.protocol}://${req.get("host")}/api/user/password-reset/${token}`;
+
+    //Set the password reset email message for client
+    const message = `This is your password reset token: \n\n${resetUrl}\n\nIf you have not requested this email, then ignore it`;
+
+    //The reset token email
+    await sendEmail({ email: userExists.email, subject: "Password Recovery", message });
   } catch (error) {
     console.log(error);
     return Response.sendFatalError({ res });
@@ -67,4 +97,5 @@ const userLogin = async (req, res) => {
 module.exports = {
   userSignUp,
   userLogin,
+  forgotPassword,
 };

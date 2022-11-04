@@ -161,5 +161,22 @@ describe("User Controller", () => {
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/Incorrect password/i);
     });
+
+    it("should succeed if user logs in successfully", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user@gmail.com",
+          password: await bcrypt.hash("user_password", 10),
+        },
+      ]);
+
+      const badPayload = { email: "user@gmail.com", password: "user_password" };
+
+      const response = await request(server).post(`${baseURL}/login`).send(badPayload);
+      expect(response.status).toBe(200);
+      expect(response.body.message).toMatch(/Successfully logged in/i);
+    });
   });
 });
