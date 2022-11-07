@@ -77,22 +77,28 @@ const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   try {
-    const userExists = await userRepository.findUserByEmail(email);
-    if (!userExists) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Sorry you do not have an account with us. Please sign up" });
+    const user = await userRepository.findUserByEmail(email);
+    if (!user) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Sorry you do not have an account with us. Please sign up" });
 
-    //Create reset password url
-    const token = crypto.randomBytes(3).toString("hex").toUpperCase();
-    const resetUrl = `${req.protocol}://${req.get("host")}/api/user/password-reset/${token}`;
+    //Create reset password token and save
+    const resetToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `${req.protocol}://${req.get("host")}/api/user/password-reset/${resetToken}`;
 
     //Set the password reset email message for client
     const message = `This is your password reset token: \n\n${resetUrl}\n\nIf you have not requested this email, then ignore it`;
 
     //The reset token email
-    await sendEmail({ email: userExists.email, subject: "Password Recovery", message });
+    await sendEmail({ email: user.email, subject: "Password Recovery", message });
 
     return Response.sendSuccess({ res, statusCode: status.OK, message: "Password reset token successfully sent" });
   } catch (error) {
-    console.log(error);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
     return Response.sendFatalError({ res });
   }
 };
