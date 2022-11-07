@@ -5,6 +5,7 @@ const status = require("../../../status-code");
 const _ = require("lodash");
 const helper = require("../../../utils/helper");
 const crypto = require("crypto");
+const sendEmail = require("../../../utils/send-email");
 
 /**
  * @Author Edomaruse, Frank
@@ -88,6 +89,19 @@ const forgotPassword = async (req, res) => {
 
     //The reset token email
     await sendEmail({ email: userExists.email, subject: "Password Recovery", message });
+
+    return Response.sendSuccess({ res, statusCode: status.OK, message: "Password reset token successfully sent" });
+  } catch (error) {
+    console.log(error);
+    return Response.sendFatalError({ res });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { password, confirmPassword } = req.body;
+  const { token } = req.params;
+
+  try {
   } catch (error) {
     console.log(error);
     return Response.sendFatalError({ res });

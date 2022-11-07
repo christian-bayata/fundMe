@@ -8,4 +8,6 @@ userRouter.post("/signup", userMiddleware.signupValidation, userController.userS
 
 userRouter.post("/login", userMiddleware.loginValidation, userController.userLogin);
 
+userRouter.post("/forgot-password", userController.forgotPassword);
+
 module.exports = userRouter;
