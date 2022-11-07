@@ -58,7 +58,7 @@ const userLogin = async (req, res) => {
     /* Format and hash user data for security */
     const protectedData = helper.formatUserData(data);
 
-    return Response.sendSuccess({ res, statusCode: status.OK, message: "User successfully logged in", body: { token, data: protectedData } });
+    return Response.sendSuccess({ res, statusCode: status.OK, message: "User successfully logged in", body: { token, userData: protectedData } });
   } catch (error) {
     // console.log(error);
     return Response.sendFatalError({ res });
@@ -108,6 +108,30 @@ const resetPassword = async (req, res) => {
   const { token } = req.params;
 
   try {
+    // Check if user with this password token still exist;
+    const resetPasswordToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+    const user = await userRepository.findUserTokenInfo({ resetPasswordToken, resetPasswordExpires: { $gt: Date.now() } });
+
+    if (!user) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Password reset token is invalid or has expired" });
+
+    // Confirm if the password matches
+    if (password !== confirmPassword) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Password does not match" });
+
+    // If password matches
+    user.password = req.body.password;
+
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    // Generate another Auth token for user
+    const authToken = user.generateJsonWebToken();
+
+    /* Format and hash user data for security */
+    const protectedData = helper.formatUserData(user);
+
+    return Response.sendSuccess({ res, statusCode: status.OK, message: "Password reset is successful", body: { token: authToken, userData: protectedData } });
   } catch (error) {
     console.log(error);
     return Response.sendFatalError({ res });
@@ -118,4 +142,5 @@ module.exports = {
   userSignUp,
   userLogin,
   forgotPassword,
+  resetPassword,
 };

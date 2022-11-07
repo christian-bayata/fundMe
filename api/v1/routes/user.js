@@ -10,4 +10,6 @@ userRouter.post("/login", userMiddleware.loginValidation, userController.userLog
 
 userRouter.post("/forgot-password", userController.forgotPassword);
 
+userRouter.patch("/reset-password/:token", userController.resetPassword);
+
 module.exports = userRouter;
