@@ -179,4 +179,49 @@ describe("User Controller", () => {
       expect(response.body.message).toMatch(/Successfully logged in/i);
     });
   });
+
+  describe("Forgot password", () => {
+    it("should fail if email is mising", async () => {
+      const badPayload = { email: "" };
+
+      const response = await request(server).post(`${baseURL}/forgot-password`).send(badPayload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/provide a valid email/i);
+    });
+
+    it("should fail if the email is wrong", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user@gmail.com",
+          password: await bcrypt.hash("user_password", 10),
+        },
+      ]);
+
+      const badPayload = { email: "user11@gmail.com" };
+
+      const response = await request(server).post(`${baseURL}/forgot-password`).send(badPayload);
+      expect(response.status).toBe(404);
+      expect(response.body.message).toMatch(/sorry/i);
+      expect(response.body.message).toMatch(/please sign up/i);
+    });
+
+    it("should succeed if the email is right", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user@gmail.com",
+          password: await bcrypt.hash("user_password", 10),
+        },
+      ]);
+
+      const goodPayload = { email: "user@gmail.com" };
+
+      const response = await request(server).post(`${baseURL}/forgot-password`).send(goodPayload);
+      expect(response.status).toBe(200);
+      expect(response.body.message).toMatch(/token successfully sent/i);
+    });
+  });
 });

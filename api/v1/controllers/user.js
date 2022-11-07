@@ -76,6 +76,8 @@ const userLogin = async (req, res) => {
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
+  if (!email) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Please provide a valid email" });
+
   try {
     const user = await userRepository.findUserByEmail(email);
     if (!user) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Sorry you do not have an account with us. Please sign up" });
@@ -102,6 +104,14 @@ const forgotPassword = async (req, res) => {
     return Response.sendFatalError({ res });
   }
 };
+
+/**
+ * @Responsibility: Enables user reset password with reset token
+ *
+ * @param req
+ * @param res
+ * @returns {Promise<*>}
+ */
 
 const resetPassword = async (req, res) => {
   const { password, confirmPassword } = req.body;

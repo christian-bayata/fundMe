@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const User = require("../../models/user");
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
+const crypto = require("crypto");
+const bcrypt = require("bcrypt");
 
 describe("Generate Auth Token", () => {
   it("should successfully generate a valid JWT token", async () => {
@@ -29,5 +31,21 @@ describe("Format User Data with Crypto", () => {
 
     expect(decryptedData).toContain(payload.email);
     expect(decryptedData).toContain(payload.password);
+  });
+
+  describe("Generate Reset Password Token", () => {
+    it("should generate a crypto token", async () => {
+      const user = new User({
+        firstName: "user_firstname",
+        lastName: "user_lastname",
+        email: "user@gmail.com",
+        password: await bcrypt.hash("user_password", 10),
+      });
+
+      const resetToken = crypto.randomBytes(20).toString("hex");
+      user.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+      expect(user.resetPasswordToken).not.toBeNull();
+    });
   });
 });
