@@ -83,10 +83,9 @@ const forgotPassword = async (req, res) => {
     if (!user) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Sorry you do not have an account with us. Please sign up" });
 
     //Create reset password token and save
-    const resetToken = user.getResetPasswordToken();
-    await user.save({ validateBeforeSave: false });
+    const getResetToken = await helper.resetToken(user);
 
-    const resetUrl = `${req.protocol}://${req.get("host")}/api/user/password-reset/${resetToken}`;
+    const resetUrl = `${req.protocol}://${req.get("host")}/api/user/reset-password/${getResetToken}`;
 
     //Set the password reset email message for client
     const message = `This is your password reset token: \n\n${resetUrl}\n\nIf you have not requested this email, then ignore it`;
@@ -96,11 +95,7 @@ const forgotPassword = async (req, res) => {
 
     return Response.sendSuccess({ res, statusCode: status.OK, message: "Password reset token successfully sent" });
   } catch (error) {
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-
-    await user.save({ validateBeforeSave: false });
-
+    console.log(error);
     return Response.sendFatalError({ res });
   }
 };
@@ -118,21 +113,29 @@ const resetPassword = async (req, res) => {
   const { token } = req.params;
 
   try {
-    // Check if user with this password token still exist;
-    const resetPasswordToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
-    const user = await userRepository.findUserTokenInfo({ resetPasswordToken, resetPasswordExpires: { $gt: Date.now() } });
+    const user = await userRepository.findUserTokenInfo({ resetPasswordToken: token });
+    if (!user) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Password reset token is invalid" });
 
-    if (!user) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Password reset token is invalid or has expired" });
+    // Check to see if the token is still valid
+    const timeDiff = +(Date.now() - user.resetPasswordDate.getTime());
+    const timeDiffInMins = +(timeDiff / (1000 * 60));
+
+    if (timeDiffInMins > 30) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordDate = undefined;
+      await user.save();
+
+      return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Password reset token has expired" });
+    }
 
     // Confirm if the password matches
     if (password !== confirmPassword) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Password does not match" });
 
     // If password matches
-    user.password = req.body.password;
+    user.password = password;
 
     user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-
+    user.resetPasswordDate = undefined;
     await user.save();
 
     // Generate another Auth token for user

@@ -2,6 +2,7 @@ const request = require("supertest");
 const User = require("../../models/user");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
 let server;
 let baseURL = "/api/user";
@@ -208,20 +209,110 @@ describe("User Controller", () => {
     });
 
     it("should succeed if the email is right", async () => {
-      await User.insertMany([
-        {
-          firstName: "user_firstname",
-          lastName: "user_lastname",
-          email: "user@gmail.com",
-          password: await bcrypt.hash("user_password", 10),
-        },
-      ]);
+      await User.create({
+        firstName: "user_firstname",
+        lastName: "user_lastname",
+        email: "user@gmail.com",
+        password: await bcrypt.hash("user_password", 10),
+      });
 
       const goodPayload = { email: "user@gmail.com" };
 
       const response = await request(server).post(`${baseURL}/forgot-password`).send(goodPayload);
       expect(response.status).toBe(200);
       expect(response.body.message).toMatch(/token successfully sent/i);
+    });
+  });
+
+  describe("Reset User Password", () => {
+    it("should fail reset token cannot be found", async () => {
+      const resetToken = crypto.randomBytes(20).toString("hex");
+      const resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+      await User.create({
+        firstName: "user1_firstname",
+        lastName: "user1_lastname",
+        email: "user111@gmail.com",
+        password: await bcrypt.hash("user_password11111", 10),
+      });
+
+      const payload = {
+        password: "user_password",
+        confirmPassword: "user_password",
+      };
+
+      const response = await request(server).patch(`${baseURL}/reset-password/${resetPasswordToken}`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/Password reset token is invalid/i);
+    });
+
+    it("should fail if the token has expired", async () => {
+      const resetToken = crypto.randomBytes(20).toString("hex");
+      const resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+      await User.create({
+        firstName: "user1_firstname",
+        lastName: "user1_lastname",
+        email: "user111@gmail.com",
+        password: await bcrypt.hash("user_password11111", 10),
+        resetPasswordToken,
+        resetPasswordDate: new Date("2022-11-09T10:08:06.050+00:00"),
+      });
+
+      const payload = {
+        password: "user_password",
+        confirmPassword: "user_password",
+      };
+
+      const response = await request(server).patch(`${baseURL}/reset-password/${resetPasswordToken}`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/Password reset token has expired/i);
+    });
+
+    it("should fail if the token has expired", async () => {
+      const resetToken = crypto.randomBytes(20).toString("hex");
+      const resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+      await User.create({
+        firstName: "user1_firstname",
+        lastName: "user1_lastname",
+        email: "user111@gmail.com",
+        password: await bcrypt.hash("user_password11111", 10),
+        resetPasswordToken,
+        resetPasswordDate: Date.now(),
+      });
+
+      const payload = {
+        password: "user_password1",
+        confirmPassword: "user_password12",
+      };
+
+      const response = await request(server).patch(`${baseURL}/reset-password/${resetPasswordToken}`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/Password does not match/i);
+    });
+
+    it("should succeed if password matches", async () => {
+      const resetToken = crypto.randomBytes(20).toString("hex");
+      const resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+      await User.create({
+        firstName: "user1_firstname",
+        lastName: "user1_lastname",
+        email: "user111@gmail.com",
+        password: await bcrypt.hash("user_password11111", 10),
+        resetPasswordToken,
+        resetPasswordDate: Date.now(),
+      });
+
+      const payload = {
+        password: "user_password12",
+        confirmPassword: "user_password12",
+      };
+
+      const response = await request(server).patch(`${baseURL}/reset-password/${resetPasswordToken}`).send(payload);
+      expect(response.status).toBe(200);
+      expect(response.body.message).toMatch(/Password reset is successful/i);
     });
   });
 });

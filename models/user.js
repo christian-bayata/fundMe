@@ -34,7 +34,7 @@ const UserSchema = new Schema(
       default: false,
     },
     resetPasswordToken: String,
-    resetPasswordExpires: Date,
+    resetPasswordDate: Date,
   },
   { timestamps: true }
 );
@@ -65,20 +65,6 @@ UserSchema.pre("save", async function save(next) {
 /* Compare password using bcrypt.compare */
 UserSchema.methods.comparePassword = async function (userPassword) {
   return await bcrypt.compare(userPassword, this.password);
-};
-
-//Reset forgotten password using crypto
-UserSchema.methods.getResetPasswordToken = function () {
-  //Generate crypto token
-  const resetToken = crypto.randomBytes(20).toString("hex");
-
-  //Encrypt the token and set it to resetPasswordToken
-  this.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
-
-  //Set the token expiry time to 30 mins
-  this.resetPasswordExpires = Date.now() + 30 * 60 * 1000;
-
-  return resetToken;
 };
 
 /* Creates the user model */
