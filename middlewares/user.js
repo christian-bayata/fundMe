@@ -1,6 +1,8 @@
 require("express-async-errors");
 const Joi = require("joi");
 const Response = require("../utils/response");
+const userRepository = require("../repositories/user");
+const status = require("../status-code");
 
 /**
  * @Responsibility: Validation middleware for user sign up
@@ -80,7 +82,41 @@ const loginValidation = async (req, res, next) => {
   }
 };
 
+const authenticateUser = async (req, res, next) => {
+  let { authorization } = req.headers;
+  const { userId } = req.body;
+
+  if (!authorization) {
+    authorization = req.body.authorization;
+  }
+
+  // decode jwt token from req header
+  const decode = jwt.verify(authorization, JWT_SECRET, (err, decoded) => decoded);
+
+  // if token is invalid or has expired
+  if (!authorization || !decode || !decode.id) {
+    return res.status(401).json({ errors: { message: "Unauthorized! Please login" } });
+  }
+
+  try {
+    const getUser = userId ? await userRepository.findUser({ _id: userId }) : await userRepository.findUser({ _id: decode._id });
+
+    // if user could not be found
+    if (!getUser) {
+      return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "User could not be found" });
+    }
+
+    res.user = getUser;
+
+    return next();
+  } catch (error) {
+    console.log(error);
+    return Response.sendFatalError({ res });
+  }
+};
+
 module.exports = {
   signupValidation,
   loginValidation,
+  authenticateUser,
 };

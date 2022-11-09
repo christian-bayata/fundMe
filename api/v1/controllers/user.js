@@ -113,7 +113,7 @@ const resetPassword = async (req, res) => {
   const { token } = req.params;
 
   try {
-    const user = await userRepository.findUserTokenInfo({ resetPasswordToken: token });
+    const user = await userRepository.findUser({ resetPasswordToken: token });
     if (!user) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Password reset token is invalid" });
 
     // Check to see if the token is still valid

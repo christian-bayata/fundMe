@@ -20,12 +20,12 @@ const createUser = async (data) => {
   return await User.create(data);
 };
 
-const findUserTokenInfo = async (data) => {
+const findUser = async (data) => {
   return await User.findOne(data);
 };
 
 module.exports = {
   findUserByEmail,
   createUser,
-  findUserTokenInfo,
+  findUser,
 };
