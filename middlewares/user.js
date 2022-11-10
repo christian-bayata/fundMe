@@ -3,6 +3,7 @@ const Joi = require("joi");
 const Response = require("../utils/response");
 const userRepository = require("../repositories/user");
 const status = require("../status-code");
+const jwt = require("jsonwebtoken");
 
 /**
  * @Responsibility: Validation middleware for user sign up
@@ -91,22 +92,22 @@ const authenticateUser = async (req, res, next) => {
   }
 
   // decode jwt token from req header
-  const decode = jwt.verify(authorization, JWT_SECRET, (err, decoded) => decoded);
+  const decode = jwt.verify(authorization, process.env.JWT_SECRET_KEY, (err, decoded) => decoded);
 
   // if token is invalid or has expired
-  if (!authorization || !decode || !decode.id) {
-    return res.status(401).json({ errors: { message: "Unauthorized! Please login" } });
+  if (!authorization || !decode || !decode._id) {
+    return Response.sendError({ res, statusCode: status.UNAUTHENTICATED, message: "Unauthenticated! Please login" });
   }
 
   try {
-    const getUser = userId ? await userRepository.findUser({ _id: userId }) : await userRepository.findUser({ _id: decode._id });
+    // const getUser = userId ? await userRepository.findUser({ _id: userId }) : await userRepository.findUser({ _id: decode._id });
 
-    // if user could not be found
-    if (!getUser) {
-      return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "User could not be found" });
-    }
+    // // if user could not be found
+    // if (!getUser) {
+    //   return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "User could not be found" });
+    // }
 
-    res.user = getUser;
+    res.user = decode;
 
     return next();
   } catch (error) {

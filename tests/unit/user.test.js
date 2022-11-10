@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 
 describe("Generate Auth Token", () => {
   it("should successfully generate a valid JWT token", async () => {
-    const payload = { userId: mongoose.Types.ObjectId(), email: "user@gmail.com", isAdmin: true };
+    const payload = { _id: mongoose.Types.ObjectId(), email: "user@gmail.com", isAdmin: true };
     // Create a new user
     const user = new User(payload);
     // Generate token

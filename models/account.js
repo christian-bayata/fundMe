@@ -10,7 +10,7 @@ const AccountSchema = new Schema(
       es_indexed: true,
     },
     number: {
-      type: Number,
+      type: String,
       required: true,
       unique: true,
       es_indexed: true,

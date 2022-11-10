@@ -42,7 +42,7 @@ const UserSchema = new Schema(
 UserSchema.methods.generateJsonWebToken = function () {
   return jwt.sign(
     {
-      userId: this._id,
+      _id: this._id,
       email: this.email,
       isAdmin: this.isAdmin,
     },

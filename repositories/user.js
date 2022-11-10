@@ -20,6 +20,11 @@ const createUser = async (data) => {
   return await User.create(data);
 };
 
+/**
+ *
+ * @param data
+ * @returns {Promise<*>}
+ */
 const findUser = async (data) => {
   return await User.findOne(data);
 };
