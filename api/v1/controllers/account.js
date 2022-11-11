@@ -18,7 +18,10 @@ const createUserAccount = async (req, res) => {
   }
 };
 
-const fundMyAccount = async (req, res) => {};
+const fundMyAccount = async (req, res) => {
+  const { user } = res;
+  const { amount, email } = req.body;
+};
 
 module.exports = {
   createUserAccount,

@@ -37,6 +37,14 @@ const TransactionSchema = new Schema(
       type: Number,
       default: 0.0,
     },
+    paySelf: {
+      type: Boolean,
+      default: false,
+    },
+    payOthers: {
+      type: Boolean,
+      default: false,
+    },
     status: {
       type: String,
       required: true,
