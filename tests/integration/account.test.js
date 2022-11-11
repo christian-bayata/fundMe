@@ -75,32 +75,35 @@ describe("Account Controller", () => {
     });
 
     it("should fail if user account already exists", async () => {
-      const user = new User({
-        firstName: "user1_firstname",
-        lastName: "user1_lastname",
-        email: "user111@gmail.com",
-        password: await bcrypt.hash("user_password11111", 10),
-      });
+      const token = new User().generateJsonWebToken();
+      const decode = jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => decoded);
 
-      const token = user.generateJsonWebToken();
-      // console.log("***********: ", token);
-      // const decode = jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => decoded);
-      // console.log("***********: ", decode);
+      console.log("************decode token: ", decode);
+      console.log("************decode Id: ", decode._id);
 
-      // const account = await Account.create({
-      //   name: "user_name",
-      //   type: "savings",
-      //   user: token._id,
-      // });
+      await Account.insertMany([
+        {
+          name: "user_name",
+          type: "savings",
+          number: "1234567890",
+          balance: {
+            avail: 0,
+            total: 0,
+          },
+          user: decode._id,
+        },
+      ]);
 
       const payload = {
         name: "user_name",
         type: "savings",
-        user: token._id,
+        user: decode._id,
       };
 
+      console.log("*************Payload: ", payload);
+
       const response = await request(server).post(`${baseURL}/create-account`).set("authorization", token).send(payload);
-      expect(response.status).toBe(409);
+      // expect(response.status).toBe(409);
       expect(response.body.message).toMatch(/already exists/i);
     });
   });

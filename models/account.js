@@ -9,7 +9,7 @@ const AccountSchema = new Schema(
       required: true,
       es_indexed: true,
     },
-    number: {
+    email: {
       type: String,
       required: true,
       unique: true,
