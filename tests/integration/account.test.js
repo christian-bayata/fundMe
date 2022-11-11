@@ -78,13 +78,11 @@ describe("Account Controller", () => {
       const token = new User().generateJsonWebToken();
       const decode = jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => decoded);
 
-      console.log("************decode token: ", decode);
-      console.log("************decode Id: ", decode._id);
-
       await Account.insertMany([
         {
           name: "user_name",
           type: "savings",
+          email: "user1@gmail.com",
           number: "1234567890",
           balance: {
             avail: 0,
@@ -97,13 +95,11 @@ describe("Account Controller", () => {
       const payload = {
         name: "user_name",
         type: "savings",
-        user: decode._id,
+        email: "user1@gmail.com",
       };
 
-      console.log("*************Payload: ", payload);
-
       const response = await request(server).post(`${baseURL}/create-account`).set("authorization", token).send(payload);
-      // expect(response.status).toBe(409);
+      expect(response.status).toBe(409);
       expect(response.body.message).toMatch(/already exists/i);
     });
   });

@@ -16,6 +16,10 @@ const validateCreateAccount = async (req, res, next) => {
     const schema = Joi.object({
       name: Joi.string().required(),
       type: Joi.string().required(),
+      email: Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+        .lowercase()
+        .required(),
     });
 
     const { error, value } = schema.validate(payload);
