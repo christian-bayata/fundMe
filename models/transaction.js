@@ -9,10 +9,6 @@ const TransactionSchema = new Schema(
       required: true,
       es_indexed: true,
     },
-    branch: {
-      type: String,
-      required: true,
-    },
     transDate: {
       type: Date,
       required: true,
@@ -23,7 +19,21 @@ const TransactionSchema = new Schema(
       enum: ["credit", "debit"],
       default: "credit",
     },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      es_indexed: true,
+    },
     amount: {
+      type: Number,
+      default: 0.0,
+    },
+    charge: {
+      type: Number,
+      default: 0.0,
+    },
+    totalAmount: {
       type: Number,
       default: 0.0,
     },
