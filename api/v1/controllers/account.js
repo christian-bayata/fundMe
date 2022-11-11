@@ -21,6 +21,12 @@ const createUserAccount = async (req, res) => {
 const fundMyAccount = async (req, res) => {
   const { user } = res;
   const { amount, email } = req.body;
+
+  try {
+  } catch (error) {
+    console.log(error);
+    return Response.sendFatalError({ res });
+  }
 };
 
 module.exports = {
