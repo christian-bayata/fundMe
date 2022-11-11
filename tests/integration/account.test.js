@@ -102,5 +102,20 @@ describe("Account Controller", () => {
       expect(response.status).toBe(409);
       expect(response.body.message).toMatch(/already exists/i);
     });
+
+    it("should successfully create account", async () => {
+      const token = new User().generateJsonWebToken();
+      const decode = jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => decoded);
+
+      const payload = {
+        name: "user_name",
+        type: "savings",
+        email: "user1@gmail.com",
+      };
+
+      const response = await request(server).post(`${baseURL}/create-account`).set("authorization", token).send(payload);
+      expect(response.status).toBe(201);
+      expect(response.body.message).toMatch(/Account successfully created/i);
+    });
   });
 });
