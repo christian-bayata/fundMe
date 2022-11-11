@@ -7,4 +7,6 @@ const accountRouter = Router();
 
 accountRouter.post("/create-account", userMiddleware.authenticateUser, accountMiddleware.validateCreateAccount, accountController.createUserAccount);
 
+accountRouter.post("/fund-my-account", userMiddleware.authenticateUser, accountMiddleware.validateInitializePayment, accountController.fundMyAccount);
+
 module.exports = accountRouter;
