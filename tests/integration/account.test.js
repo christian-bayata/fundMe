@@ -83,7 +83,7 @@ describe("Account Controller", () => {
           name: "user_name",
           type: "savings",
           email: "user1@gmail.com",
-          number: "1234567890",
+          accountNum: "1234567890",
           balance: {
             avail: 0,
             total: 0,
@@ -117,5 +117,27 @@ describe("Account Controller", () => {
       expect(response.status).toBe(201);
       expect(response.body.message).toMatch(/Account successfully created/i);
     });
+  });
+
+  describe("Fetch users' account(s)", () => {
+    it("should fail if user is not an admin", async () => {
+      const payload = { _id: mongoose.Types.ObjectId(), email: "user@gmail.com", isAdmin: false };
+      const user = new User(payload);
+      const token = user.generateJsonWebToken();
+
+      const response = await request(server).get(`${baseURL}/get-accounts`).set("authorization", token);
+      expect(response.status).toBe(403);
+      expect(response.body.message).toMatch(/Unauthorized/i);
+    });
+  });
+
+  it("should fail if user does provide a flag", async () => {
+    const payload = { _id: mongoose.Types.ObjectId(), email: "user@gmail.com", isAdmin: true };
+    const user = new User(payload);
+    const token = user.generateJsonWebToken();
+
+    const response = await request(server).get(`${baseURL}/get-accounts?flag=`).set("authorization", token);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toMatch(/provide a flag/i);
   });
 });

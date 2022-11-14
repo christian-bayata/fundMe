@@ -27,7 +27,7 @@ const findAccount = async (where) => {
  */
 
 const findAccounts = async () => {
-  return await Account.find({});
+  return await Account.find();
 };
 
 module.exports = {

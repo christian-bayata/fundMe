@@ -25,17 +25,21 @@ const createUserAccount = async (req, res) => {
   }
 };
 
-const getUserAccount = async (req, res) => {
+const getUserAccounts = async (req, res) => {
   const { admin } = res;
   const { flag, acct_num } = req.query;
 
   if (!admin) return Response.sendError({ res, statusCode: status.UNAUTHORIZED, message: "Unauthorized to access resource" });
+
+  if (!flag) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide a flag" });
 
   const validFlags = ["single", "all"];
   if (!validFlags.includes(flag)) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Invalid flag" });
 
   try {
     if (flag == "single") {
+      if (!acct_num) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide an account number" });
+
       const getAccount = await accountRepository.findAccount({ accountNum: acct_num });
       if (!getAccount) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Account does not exist" });
 
@@ -43,7 +47,7 @@ const getUserAccount = async (req, res) => {
     }
 
     if (flag == "all") {
-      const getAccounts = await accountRepository.findAccount();
+      const getAccounts = await accountRepository.findAccounts();
       return Response.sendSuccess({ res, statusCode: status.OK, message: "Successfully retrieved all user accounts", body: getAccounts });
     }
   } catch (error) {
@@ -92,6 +96,6 @@ const getUserAccount = async (req, res) => {
 
 module.exports = {
   createUserAccount,
-  getUserAccount,
+  getUserAccounts,
   /* initializePayment */
 };
