@@ -7,6 +7,10 @@ const helper = require("../../../utils/helper");
 const crypto = require("crypto");
 const sendEmail = require("../../../utils/send-email");
 
+const homePage = (req, res) => {
+  res.render("pages/index");
+};
+
 /**
  * @Author Edomaruse, Frank
  * @Responsibility:  Sign up a new user
@@ -152,6 +156,7 @@ const resetPassword = async (req, res) => {
 };
 
 module.exports = {
+  homePage,
   userSignUp,
   userLogin,
   forgotPassword,

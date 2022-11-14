@@ -22,6 +22,9 @@ app.use(cors());
 const connectionString = require("./config/connection");
 new Database(connectionString).connect();
 
+// set the view engine to ejs
+app.set("view engine", "ejs");
+
 /* Ping the API to ensure it is running. */
 app.get("/health-check", (req, res) => {
   return Response.sendSuccess({ res, message: "Health check passed" });
@@ -29,9 +32,6 @@ app.get("/health-check", (req, res) => {
 
 /* Bind app port to index router */
 app.use("/api", router);
-
-// set the view engine to ejs
-app.set("view engine", "ejs");
 
 /* Use the error handling middleware as the last in the middleware stack */
 app.use(error);

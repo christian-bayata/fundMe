@@ -1,8 +1,11 @@
+require("dotenv").config();
 const accountRepository = require("../../../repositories/account");
 const status = require("../../../status-code");
 const Response = require("../../../utils/response");
 const request = require("request");
-const { initializePayment, verifyPayment } = require("../../../config/paystack")(request);
+const util = require("util");
+const theRequest = util.promisify(request);
+const crypto = require("crypto");
 
 const createUserAccount = async (req, res) => {
   const { user, data } = res;
@@ -22,7 +25,7 @@ const createUserAccount = async (req, res) => {
   }
 };
 
-const fundMyAccount = async (req, res) => {
+const initializePayment = async (req, res) => {
   const { user, data } = res;
 
   if (!user) return Response.sendError({ res, statusCode: status.UNAUTHENTICATED, message: "Unautheniticated user" });
@@ -31,16 +34,29 @@ const fundMyAccount = async (req, res) => {
     const accountExists = await accountRepository.findAccount({ email: data.email });
     if (!accountExists) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Account cannot be found" });
 
-    /* Paystack payment initialization */
-    initializePayment(data, (error, response) => {
-      if (error) {
-        console.log(error);
-      }
-      console.log(JSON.parse(response));
-    });
+    const url = `https://api.paystack.co/transaction/initialize`;
+    const SECRET = process.env.PAYSTACK_TEST_SK;
 
-    // return Response.sendSuccess({ res, statusCode: status.OK, message: "Payment Initialized", body: JSON.parse(response) });
-    //  console.log("**************Payment Data: ", paymentData);
+    const options = {
+      method: "POST",
+      url: url,
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${SECRET}`,
+      },
+      body: { email: data.email, amount: data.amount * 100 },
+      json: true,
+    };
+
+    /* Paystack payment initialization */
+    theRequest(options).then(async (resp) => {
+      if (resp.body.status == true) {
+        return Response.sendSuccess({ res, statusCode: status.OK, message: resp.body.message, body: resp.body.data.authorization_url });
+      }
+      if (resp.body.status == false) {
+        return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: resp.body.message });
+      }
+    });
   } catch (error) {
     console.log(error);
     return Response.sendFatalError({ res });
@@ -49,5 +65,5 @@ const fundMyAccount = async (req, res) => {
 
 module.exports = {
   createUserAccount,
-  fundMyAccount,
+  initializePayment,
 };
