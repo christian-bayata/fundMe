@@ -80,7 +80,7 @@ const updateAccount = async (req, res) => {
   const { name } = req.body;
 
   if (!admin) return Response.sendError({ res, statusCode: status.UNAUTHORIZED, message: "Unauthorized to access resource" });
-  if (!id) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide the Id" });
+
   if (!name) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide the name" });
 
   try {
@@ -101,8 +101,6 @@ const deleteAccount = async (req, res) => {
   const { id } = req.params;
 
   if (!admin) return Response.sendError({ res, statusCode: status.UNAUTHORIZED, message: "Unauthorized to access resource" });
-
-  if (!id) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide the id of the resource" });
 
   try {
     const user = await accountRepository.findAccount({ _id: id });
