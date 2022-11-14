@@ -83,6 +83,15 @@ const loginValidation = async (req, res, next) => {
   }
 };
 
+/**
+ * @Responsibility:  Middleware authentication for users
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {*}
+ */
+
 const authenticateUser = async (req, res, next) => {
   let { authorization } = req.headers;
   const { userId } = req.body;
@@ -115,6 +124,15 @@ const authenticateUser = async (req, res, next) => {
     return Response.sendFatalError({ res });
   }
 };
+
+/**
+ * @Responsibility:  Middleware authentication for admins
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {*}
+ */
 
 const isAdmin = async (req, res, next) => {
   const { authorization } = req.headers;

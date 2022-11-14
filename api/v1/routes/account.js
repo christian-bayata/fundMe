@@ -9,6 +9,10 @@ accountRouter.post("/create-account", userMiddleware.authenticateUser, accountMi
 
 accountRouter.get("/get-accounts", userMiddleware.isAdmin, accountController.getUserAccounts);
 
+accountRouter.patch("/update-account/:id", userMiddleware.isAdmin, accountController.updateAccount);
+
+accountRouter.delete("/delete-account/:id", userMiddleware.isAdmin, accountController.deleteAccount);
+
 // accountRouter.post("/initialize-payment", userMiddleware.authenticateUser, accountMiddleware.validateInitializePayment, accountController.initializePayment);
 
 module.exports = accountRouter;

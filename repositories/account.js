@@ -30,8 +30,30 @@ const findAccounts = async () => {
   return await Account.find();
 };
 
+/**
+ *
+ * @param user
+ * @param id
+ * @returns {Promise<void>}
+ */
+const updateAccount = async (data, id) => {
+  return await Account.findOneAndUpdate({ _id: id }, data, { new: true });
+};
+
+/**
+ *
+ * @param user
+ * @param id
+ * @returns {Promise<void>}
+ */
+const deleteAccount = async (data) => {
+  return await Account.deleteOne(data);
+};
+
 module.exports = {
   createAccount,
   findAccount,
   findAccounts,
+  updateAccount,
+  deleteAccount,
 };

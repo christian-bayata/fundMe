@@ -1,12 +1,12 @@
 require("dotenv").config();
 const accountRepository = require("../../../repositories/account");
+const userRepository = require("../../../repositories/user");
 const status = require("../../../status-code");
 const Response = require("../../../utils/response");
 // const request = require("request");
 // const util = require("util");
 // const theRequest = util.promisify(request);
 const crypto = require("crypto");
-
 
 /**
  * @Author Edomaruse, Frank
@@ -43,7 +43,6 @@ const createUserAccount = async (req, res) => {
  * @returns {Promise<*>}
  */
 
-
 const getUserAccounts = async (req, res) => {
   const { admin } = res;
   const { flag, acct_num } = req.query;
@@ -75,7 +74,48 @@ const getUserAccounts = async (req, res) => {
   }
 };
 
-const 
+const updateAccount = async (req, res) => {
+  const { admin } = res;
+  const { id } = req.params;
+  const { name } = req.body;
+
+  if (!admin) return Response.sendError({ res, statusCode: status.UNAUTHORIZED, message: "Unauthorized to access resource" });
+  if (!id) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide the Id" });
+  if (!name) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide the name" });
+
+  try {
+    const user = await accountRepository.findAccount({ _id: id });
+    if (!user) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Account does not exist" });
+
+    const updatedUser = await accountRepository.updateAccount({ name }, id);
+
+    return Response.sendSuccess({ res, statusCode: status.OK, message: "Successfully updated user account", body: updatedUser });
+  } catch (error) {
+    console.log(error);
+    return Response.sendFatalError({ res });
+  }
+};
+
+const deleteAccount = async (req, res) => {
+  const { admin } = res;
+  const { id } = req.params;
+
+  if (!admin) return Response.sendError({ res, statusCode: status.UNAUTHORIZED, message: "Unauthorized to access resource" });
+
+  if (!id) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide the id of the resource" });
+
+  try {
+    const user = await accountRepository.findAccount({ _id: id });
+    if (!user) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Account does not exist" });
+
+    await accountRepository.deleteAccount({ id });
+
+    return Response.sendSuccess({ res, statusCode: status.OK, message: "Successfully deleted user account" });
+  } catch (error) {
+    console.log(error);
+    return Response.sendFatalError({ res });
+  }
+};
 
 // const initializePayment = async (req, res) => {
 //   const { user, data } = res;
@@ -118,5 +158,7 @@ const
 module.exports = {
   createUserAccount,
   getUserAccounts,
+  updateAccount,
+  deleteAccount,
   /* initializePayment */
 };
