@@ -25,25 +25,27 @@ describe("Account Controller", () => {
   });
 
   describe("Creating a new user account", () => {
-    it("should fail if user does not provide any token", async () => {
-      const badPayload = {
+    it("should fail if user's token is not valid", async () => {
+      const token = new User().generateJsonWebToken();
+      const payload = {
         name: "user_name",
         type: "savings",
+        email: "user1@gmail.com",
       };
 
-      const response = await request(server).post(`${baseURL}/create-account`).set("authorization", null).send(badPayload);
+      const response = await request(server).post(`${baseURL}/create-account`).set("authorization", "iuiyuydsdstrytuyiuoipoijkhjghg4565768796rd").send(payload);
       expect(response.status).toBe(401);
       expect(response.body.message).toMatch(/unauthenticated/i);
     });
 
-    it("should fail if user's token is not valid", async () => {
-      const token = new User().generateJsonWebToken();
-      const badPayload = {
+    it("should fail if user does not provide any token", async () => {
+      const payload = {
         name: "user_name",
         type: "savings",
+        email: "user1@gmail.com",
       };
 
-      const response = await request(server).post(`${baseURL}/create-account`).set("authorization", "iuiyuydsdstrytuyiuoipoijkhjghg4565768796rd").send(badPayload);
+      const response = await request(server).post(`${baseURL}/create-account`).set("authorization", null).send(payload);
       expect(response.status).toBe(401);
       expect(response.body.message).toMatch(/unauthenticated/i);
     });
@@ -51,11 +53,12 @@ describe("Account Controller", () => {
     it("should fail if user does not provide a name", async () => {
       const token = new User().generateJsonWebToken();
 
-      const badPayload = {
+      const payload = {
         type: "savings",
+        email: "user1@gmail.com",
       };
 
-      const response = await request(server).post(`${baseURL}/create-account`).set("authorization", token).send(badPayload);
+      const response = await request(server).post(`${baseURL}/create-account`).set("authorization", token).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/name/i);
       expect(response.body.message).toMatch(/required/i);
@@ -64,11 +67,12 @@ describe("Account Controller", () => {
     it("should fail if user does not provide an account type", async () => {
       const token = new User().generateJsonWebToken();
 
-      const badPayload = {
+      const payload = {
         name: "user_name",
+        email: "user1@gmail.com",
       };
 
-      const response = await request(server).post(`${baseURL}/create-account`).set("authorization", token).send(badPayload);
+      const response = await request(server).post(`${baseURL}/create-account`).set("authorization", token).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/type/i);
       expect(response.body.message).toMatch(/required/i);
@@ -139,5 +143,54 @@ describe("Account Controller", () => {
     const response = await request(server).get(`${baseURL}/get-accounts?flag=`).set("authorization", token);
     expect(response.status).toBe(400);
     expect(response.body.message).toMatch(/provide a flag/i);
+  });
+
+  it("should fail if user provides flag but not account number", async () => {
+    const payload = { _id: mongoose.Types.ObjectId(), email: "user@gmail.com", isAdmin: true };
+    const user = new User(payload);
+    const token = user.generateJsonWebToken();
+
+    const response = await request(server).get(`${baseURL}/get-accounts?flag=single&acct_num=`).set("authorization", token);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toMatch(/Provide an account number/i);
+  });
+
+  it("should fail if user account cannot be found", async () => {
+    const payload = { _id: mongoose.Types.ObjectId(), email: "user@gmail.com", isAdmin: true };
+    const user = new User(payload);
+    const token = user.generateJsonWebToken();
+
+    const response = await request(server).get(`${baseURL}/get-accounts?flag=single&acct_num=0987654332`).set("authorization", token);
+    expect(response.status).toBe(404);
+    expect(response.body.message).toMatch(/account does not exist/i);
+  });
+
+  it("should successfully fetch user account", async () => {
+    const payload = { _id: mongoose.Types.ObjectId(), email: "user@gmail.com", isAdmin: true };
+    const user = new User(payload);
+    const token = user.generateJsonWebToken();
+
+    const account = await Account.create({
+      name: "user1_name",
+      type: "savings",
+      email: "user1@gmail.com",
+      accountNum: "1234567890",
+    });
+
+    const response = await request(server).get(`${baseURL}/get-accounts?flag=single&acct_num=${account.accountNum}`).set("authorization", token);
+    expect(response.status).toBe(200);
+    expect(response.body.message).toMatch(/successfully retrieved/i);
+    expect(response.body.message).toMatch(/user account/i);
+  });
+
+  it("should successfully fetch all user accounts", async () => {
+    const payload = { _id: mongoose.Types.ObjectId(), email: "user@gmail.com", isAdmin: true };
+    const user = new User(payload);
+    const token = user.generateJsonWebToken();
+
+    const response = await request(server).get(`${baseURL}/get-accounts?flag=all`).set("authorization", token);
+    expect(response.status).toBe(200);
+    expect(response.body.message).toMatch(/successfully retrieved/i);
+    expect(response.body.message).toMatch(/all user accounts/i);
   });
 });

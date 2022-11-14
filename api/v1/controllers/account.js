@@ -7,6 +7,16 @@ const Response = require("../../../utils/response");
 // const theRequest = util.promisify(request);
 const crypto = require("crypto");
 
+
+/**
+ * @Author Edomaruse, Frank
+ * @Responsibility:  create a new account for a user
+ *
+ * @param req
+ * @param res
+ * @returns {Promise<*>}
+ */
+
 const createUserAccount = async (req, res) => {
   const { user, data } = res;
 
@@ -24,6 +34,15 @@ const createUserAccount = async (req, res) => {
     return Response.sendFatalError({ res });
   }
 };
+
+/**
+ * @Responsibility:  retrive all users or a single user by account number, based on admin privilege
+ *
+ * @param req
+ * @param res
+ * @returns {Promise<*>}
+ */
+
 
 const getUserAccounts = async (req, res) => {
   const { admin } = res;
@@ -55,6 +74,8 @@ const getUserAccounts = async (req, res) => {
     return Response.sendFatalError({ res });
   }
 };
+
+const 
 
 // const initializePayment = async (req, res) => {
 //   const { user, data } = res;

@@ -23,52 +23,52 @@ describe("User Controller", () => {
 
   describe("Creating a new user", () => {
     it("should fail if the first name is missing from payload", async () => {
-      const badPayload = {
+      const payload = {
         lastName: "user_lastname",
         email: "user@gmail.com",
         password: "user_password",
       };
 
-      const response = await request(server).post(`${baseURL}/signup`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/signup`).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/required/i);
       expect(response.body.message).toMatch(/firstName/i);
     });
 
     it("should fail if the last name is missing from payload", async () => {
-      const badPayload = {
+      const payload = {
         firstName: "user_firstname",
         email: "user@gmail.com",
         password: "user_password",
       };
 
-      const response = await request(server).post(`${baseURL}/signup`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/signup`).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/required/i);
       expect(response.body.message).toMatch(/lastName/);
     });
 
     it("should fail if the email is missing from payload", async () => {
-      const badPayload = {
+      const payload = {
         firstName: "user_firstname",
         lastName: "user_lastname",
         password: "user_password",
       };
 
-      const response = await request(server).post(`${baseURL}/signup`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/signup`).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/required/i);
       expect(response.body.message).toMatch(/email/i);
     });
 
     it("should fail if the password is missing from payload", async () => {
-      const badPayload = {
+      const payload = {
         firstName: "user_firstname",
         lastName: "user_lastname",
         email: "user@gmail.com",
       };
 
-      const response = await request(server).post(`${baseURL}/signup`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/signup`).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/required/i);
       expect(response.body.message).toMatch(/Password/i);
@@ -84,14 +84,14 @@ describe("User Controller", () => {
         },
       ]);
 
-      const badPayload = {
+      const payload = {
         firstName: "user_firstname1",
         lastName: "user_lastname2",
         email: "user@gmail.com",
         password: "user_password",
       };
 
-      const response = await request(server).post(`${baseURL}/signup`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/signup`).send(payload);
       expect(response.status).toBe(409);
       expect(response.body.message).toMatch(/already exists/i);
     });
@@ -112,18 +112,18 @@ describe("User Controller", () => {
 
   describe("Login an already signed up user", () => {
     it("should fail if email is mising", async () => {
-      const badPayload = { password: "user_password" };
+      const payload = { password: "user_password" };
 
-      const response = await request(server).post(`${baseURL}/login`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/login`).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/email/i);
       expect(response.body.message).toMatch(/required/i);
     });
 
     it("should fail if password is mising", async () => {
-      const badPayload = { email: "user@gmail.com" };
+      const payload = { email: "user@gmail.com" };
 
-      const response = await request(server).post(`${baseURL}/login`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/login`).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/password/i);
       expect(response.body.message).toMatch(/required/i);
@@ -139,9 +139,9 @@ describe("User Controller", () => {
         },
       ]);
 
-      const badPayload = { email: "user11@gmail.com", password: "user_password" };
+      const payload = { email: "user11@gmail.com", password: "user_password" };
 
-      const response = await request(server).post(`${baseURL}/login`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/login`).send(payload);
       expect(response.status).toBe(404);
       expect(response.body.message).toMatch(/Sorry you do not have an account with us/i);
     });
@@ -156,9 +156,9 @@ describe("User Controller", () => {
         },
       ]);
 
-      const badPayload = { email: "user@gmail.com", password: "user123_password" };
+      const payload = { email: "user@gmail.com", password: "user123_password" };
 
-      const response = await request(server).post(`${baseURL}/login`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/login`).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/Incorrect password/i);
     });
@@ -173,9 +173,9 @@ describe("User Controller", () => {
         },
       ]);
 
-      const badPayload = { email: "user@gmail.com", password: "user_password" };
+      const payload = { email: "user@gmail.com", password: "user_password" };
 
-      const response = await request(server).post(`${baseURL}/login`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/login`).send(payload);
       expect(response.status).toBe(200);
       expect(response.body.message).toMatch(/Successfully logged in/i);
     });
@@ -183,9 +183,9 @@ describe("User Controller", () => {
 
   describe("Forgot password", () => {
     it("should fail if email is mising", async () => {
-      const badPayload = { email: "" };
+      const payload = { email: "" };
 
-      const response = await request(server).post(`${baseURL}/forgot-password`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/forgot-password`).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/provide a valid email/i);
     });
@@ -200,9 +200,9 @@ describe("User Controller", () => {
         },
       ]);
 
-      const badPayload = { email: "user11@gmail.com" };
+      const payload = { email: "user11@gmail.com" };
 
-      const response = await request(server).post(`${baseURL}/forgot-password`).send(badPayload);
+      const response = await request(server).post(`${baseURL}/forgot-password`).send(payload);
       expect(response.status).toBe(404);
       expect(response.body.message).toMatch(/sorry/i);
       expect(response.body.message).toMatch(/please sign up/i);
