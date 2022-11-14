@@ -116,8 +116,35 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
+const isAdmin = async (req, res) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) {
+    authorization = req.body.authorization;
+
+    // decode jwt token from req header
+    const decode = jwt.verify(authorization, process.env.JWT_SECRET_KEY, (err, decoded) => decoded);
+
+    // if token is invalid or has expired
+    if (!authorization || !decode || !decode._id) {
+      return Response.sendError({ res, statusCode: status.UNAUTHENTICATED, message: "Unauthenticated! Please login" });
+    }
+  }
+
+  try {
+    const getAdmin = decode.isAdmin ? true : false;
+
+    res.admin = getAdmin;
+    return next();
+  } catch (error) {
+    console.log(error);
+    return Response.sendFatalError({ res });
+  }
+};
+
 module.exports = {
   signupValidation,
   loginValidation,
   authenticateUser,
+  isAdmin,
 };

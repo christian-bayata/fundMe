@@ -7,6 +7,6 @@ const accountRouter = Router();
 
 accountRouter.post("/create-account", userMiddleware.authenticateUser, accountMiddleware.validateCreateAccount, accountController.createUserAccount);
 
-accountRouter.post("/initialize-payment", userMiddleware.authenticateUser, accountMiddleware.validateInitializePayment, accountController.initializePayment);
+// accountRouter.post("/initialize-payment", userMiddleware.authenticateUser, accountMiddleware.validateInitializePayment, accountController.initializePayment);
 
 module.exports = accountRouter;

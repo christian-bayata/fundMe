@@ -20,7 +20,18 @@ const findAccount = async (where) => {
   return await Account.findOne(where);
 };
 
+/**
+ *
+ * @param where
+ * @returns {Promise<*>}
+ */
+
+const findAccounts = async () => {
+  return await Account.find({});
+};
+
 module.exports = {
   createAccount,
   findAccount,
+  findAccounts,
 };
