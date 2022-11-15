@@ -92,12 +92,12 @@ const updateAccount = async (req, res) => {
   if (!name) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide the name" });
 
   try {
-    const user = await accountRepository.findAccount({ _id: id });
-    if (!user) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Account does not exist" });
+    const userAccount = await accountRepository.findAccount({ _id: id });
+    if (!userAccount) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Account does not exist" });
 
-    const updatedUser = await accountRepository.updateAccount({ name }, id);
+    const updatedAccount = await accountRepository.updateAccount({ name }, id);
 
-    return Response.sendSuccess({ res, statusCode: status.OK, message: "Successfully updated user account", body: updatedUser });
+    return Response.sendSuccess({ res, statusCode: status.OK, message: "Successfully updated user account", body: updatedAccount });
   } catch (error) {
     console.log(error);
     return Response.sendFatalError({ res });

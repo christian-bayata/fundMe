@@ -84,6 +84,37 @@ const loginValidation = async (req, res, next) => {
 };
 
 /**
+ * @Responsibility: Validation middleware for user update
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {*}
+ */
+
+const updateUserValidation = async (req, res, next) => {
+  const payload = req.body;
+
+  try {
+    const schema = Joi.object({
+      firstName: Joi.string().required(),
+      lastName: Joi.string().required(),
+    });
+
+    const { error, value } = schema.validate(payload);
+
+    if (error) {
+      return Response.sendError({ res, message: error.details[0].message });
+    }
+
+    res.data = value;
+    return next();
+  } catch (error) {
+    return error;
+  }
+};
+
+/**
  * @Responsibility:  Middleware authentication for users
  *
  * @param req
@@ -165,4 +196,5 @@ module.exports = {
   loginValidation,
   authenticateUser,
   isAdmin,
+  updateUserValidation,
 };

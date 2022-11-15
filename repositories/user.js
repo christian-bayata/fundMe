@@ -37,9 +37,30 @@ const findUsers = async () => {
   return await User.find();
 };
 
+/**
+ *
+ * @param data
+ * @param id
+ * @returns {Promise<void>}
+ */
+const updateUser = async (data, id) => {
+  return await User.findOneAndUpdate({ _id: id }, data, { new: true });
+};
+
+/**
+ *
+ * @param data
+ * @returns {Promise<void>}
+ */
+const deleteUser = async (data) => {
+  return await User.deleteOne(data);
+};
+
 module.exports = {
   findUserByEmail,
   createUser,
   findUser,
   findUsers,
+  updateUser,
+  deleteUser,
 };

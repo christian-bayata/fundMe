@@ -31,7 +31,7 @@ const findAccounts = async () => {
 
 /**
  *
- * @param user
+ * @param data
  * @param id
  * @returns {Promise<void>}
  */
@@ -41,8 +41,7 @@ const updateAccount = async (data, id) => {
 
 /**
  *
- * @param user
- * @param id
+ * @param data
  * @returns {Promise<void>}
  */
 const deleteAccount = async (data) => {

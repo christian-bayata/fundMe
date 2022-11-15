@@ -43,7 +43,7 @@ const getUsers = async (req, res) => {
 };
 
 /**
- * @Responsibility:  Admin - Get a single user or all users
+ * @Responsibility:  Admin - Update a single user
  *
  * @param req
  * @param res
@@ -51,11 +51,47 @@ const getUsers = async (req, res) => {
  */
 
 const updateUser = async (req, res) => {
-  const { admin } = res;
-  const { flag, id } = req.query;
+  const { user, data } = res;
+  const { id } = req.params;
+
+  if (!user) return Response.sendError({ res, statusCode: status.UNAUTHENTICATED, message: "Unauthenticated user" });
 
   try {
+    const user = await userRepository.findUser({ _id: id });
+    if (!user) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "User does not exist" });
+
+    const updatedUser = await userRepository.updateUser({ firstName: data.firstName, lastName: data.lastName }, id);
+
+    return Response.sendSuccess({ res, statusCode: status.OK, message: "Successfully updated user", body: updatedUser });
   } catch (error) {
+    console.log(error);
+    return Response.sendFatalError({ res });
+  }
+};
+
+/**
+ * @Responsibility:  Admin - Delete a single user
+ *
+ * @param req
+ * @param res
+ * @returns {Promise<*>}
+ */
+
+const deleteUser = async (req, res) => {
+  const { admin } = res;
+  const { id } = req.params;
+
+  if (!admin) return Response.sendError({ res, statusCode: status.UNAUTHORIZED, message: "Unauthorized to access resource" });
+
+  try {
+    const user = await userRepository.findUser({ _id: id });
+    if (!user) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "User does not exist" });
+
+    await userRepository.deleteUser({ _id: id });
+
+    return Response.sendSuccess({ res, statusCode: status.OK, message: "Successfully deleted user" });
+  } catch (error) {
+    console.log(error);
     return Response.sendFatalError({ res });
   }
 };
@@ -63,4 +99,5 @@ const updateUser = async (req, res) => {
 module.exports = {
   getUsers,
   updateUser,
+  deleteUser,
 };
