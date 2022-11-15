@@ -36,7 +36,7 @@ const createUserAccount = async (req, res) => {
 };
 
 /**
- * @Responsibility:  retrive all users or a single user by account number, based on admin privilege
+ * @Responsibility:  Admin - retrive all users or a single user by account number, based on admin privilege
  *
  * @param req
  * @param res
@@ -74,6 +74,14 @@ const getUserAccounts = async (req, res) => {
   }
 };
 
+/**
+ * @Responsibility:  Admin - update users' accounts
+ *
+ * @param req
+ * @param res
+ * @returns {Promise<*>}
+ */
+
 const updateAccount = async (req, res) => {
   const { admin } = res;
   const { id } = req.params;
@@ -95,6 +103,14 @@ const updateAccount = async (req, res) => {
     return Response.sendFatalError({ res });
   }
 };
+
+/**
+ * @Responsibility:  Admin - delete users' accounts
+ *
+ * @param req
+ * @param res
+ * @returns {Promise<*>}
+ */
 
 const deleteAccount = async (req, res) => {
   const { admin } = res;

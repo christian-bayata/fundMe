@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
 let server;
-let baseURL = "/api/user";
+let baseURL = "/api/auth";
 
 describe("User Controller", () => {
   beforeAll(() => {

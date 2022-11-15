@@ -29,8 +29,17 @@ const findUser = async (data) => {
   return await User.findOne(data);
 };
 
+/**
+ *
+ * @returns {Promise<*>}
+ */
+const findUsers = async () => {
+  return await User.find();
+};
+
 module.exports = {
   findUserByEmail,
   createUser,
   findUser,
+  findUsers,
 };

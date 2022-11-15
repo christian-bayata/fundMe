@@ -22,7 +22,6 @@ const findAccount = async (where) => {
 
 /**
  *
- * @param where
  * @returns {Promise<*>}
  */
 
