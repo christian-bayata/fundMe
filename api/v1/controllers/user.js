@@ -34,8 +34,27 @@ const getUsers = async (req, res) => {
 
     if (flag == "all") {
       const getUsers = await userRepository.findUsers();
-      return Response.sendSuccess({ res, statusCode: status.OK, message: "Successfully retrieved all user accounts", body: getAccounts });
+      return Response.sendSuccess({ res, statusCode: status.OK, message: "Successfully retrieved all users", body: getUsers });
     }
+  } catch (error) {
+    console.log(error);
+    return Response.sendFatalError({ res });
+  }
+};
+
+/**
+ * @Responsibility:  Admin - Get a single user or all users
+ *
+ * @param req
+ * @param res
+ * @returns {Promise<*>}
+ */
+
+const updateUser = async (req, res) => {
+  const { admin } = res;
+  const { flag, id } = req.query;
+
+  try {
   } catch (error) {
     return Response.sendFatalError({ res });
   }
@@ -43,4 +62,5 @@ const getUsers = async (req, res) => {
 
 module.exports = {
   getUsers,
+  updateUser,
 };

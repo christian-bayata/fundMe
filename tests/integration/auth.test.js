@@ -7,7 +7,7 @@ const crypto = require("crypto");
 let server;
 let baseURL = "/api/auth";
 
-describe("User Controller", () => {
+describe("Auth Controller", () => {
   beforeAll(() => {
     server = require("../../server");
   });
