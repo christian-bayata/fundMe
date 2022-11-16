@@ -10,6 +10,7 @@ const fundMyAccount = async (req, res) => {
   const { user } = res;
   const { amount } = req.body;
 
+  /*  Start mongoose transaction */
   const session = await mongoose.startSession();
   session.startTransaction();
 
