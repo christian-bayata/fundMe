@@ -8,17 +8,21 @@ const mongoose = require("mongoose");
 
 const fundMyAccount = async (req, res) => {
   const { user } = res;
-  const { amount } = req.body;
-
-  /*  Start mongoose transaction */
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  const { amount, flag, accountNum } = req.body;
 
   if (!user) return Response.sendError({ res, statusCode: status.UNAUTHENTICATED, message: "Unauthenticated user" });
   if (!amount) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide the amount" });
 
+  if (!flag) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide a flag" });
+  const validFlags = ["my_account", "other_account"];
+  if (!validFlags.includes(flag)) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Invalid flag" });
+
   try {
-    const getAccount = await accountRepository.findAccount({ user: user._id });
+    /*  Start mongoose transaction */
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    const getAccount = flag == "my_account" ? await accountRepository.findAccount({ user: user._id }) : await accountRepository.findAccount({ accountNum });
     if (!getAccount) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Account does not exist" });
 
     const data = {
@@ -47,7 +51,7 @@ const fundMyAccount = async (req, res) => {
     /* Update the account schema */
     await accountRepository.updateAccount({ $inc: { available: overallData.totalAmount, total: overallData.totalAmount }, dateOfLastAction: Date.now() }, getAccount._id, { session });
 
-    return Response.sendSuccess({ res, statusCode: status.OK, message: "Successfully funded your account", body: createdTransaction });
+    return Response.sendSuccess({ res, statusCode: status.OK, message: flag == "my_account" ? "Successfully funded your account" : "Successfully funded your account", body: createdTransaction });
   } catch (error) {
     console.log(error);
     return Response.sendFatalError({ res });

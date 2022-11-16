@@ -32,6 +32,7 @@ describe("Transaction Controller", () => {
 
       const payload = {
         amount: "1000",
+        flag: "my_account",
       };
 
       const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", "vhjhiu80uigfytuytugvjoiugejvbmgjyiuhewk").send(payload);
@@ -43,6 +44,7 @@ describe("Transaction Controller", () => {
       const token = new User({ _id: mongoose.Types.ObjectId(), email: "user1@gmail.com", isAdmin: false }).generateJsonWebToken();
       const payload = {
         amount: "",
+        flag: "my_account",
       };
 
       const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
@@ -50,11 +52,35 @@ describe("Transaction Controller", () => {
       expect(response.body.message).toMatch(/provide the amount/i);
     });
 
+    it("should fail if user does not provide a flag", async () => {
+      const token = new User({ _id: mongoose.Types.ObjectId(), email: "user1@gmail.com", isAdmin: false }).generateJsonWebToken();
+      const payload = {
+        amount: "1000",
+      };
+
+      const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/provide a flag/i);
+    });
+
+    it("should fail if user provides an invalid flag", async () => {
+      const token = new User({ _id: mongoose.Types.ObjectId(), email: "user1@gmail.com", isAdmin: false }).generateJsonWebToken();
+      const payload = {
+        amount: "1000",
+        flag: "some_value",
+      };
+
+      const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/invalid flag/i);
+    });
+
     it("should fail if the user account does not exist", async () => {
       const token = new User({ _id: mongoose.Types.ObjectId(), email: "user1@gmail.com", isAdmin: false }).generateJsonWebToken();
 
       const payload = {
         amount: "10500",
+        flag: "my_account",
       };
 
       const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
@@ -86,6 +112,7 @@ describe("Transaction Controller", () => {
 
       const payload = {
         amount: "1000",
+        flag: "my_account",
       };
 
       const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
@@ -118,6 +145,7 @@ describe("Transaction Controller", () => {
 
       const payload = {
         amount: "10500",
+        flag: "my_account",
       };
 
       const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
