@@ -19,12 +19,6 @@ const TransactionSchema = new Schema(
       enum: ["credit", "debit"],
       default: "credit",
     },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      es_indexed: true,
-    },
     amount: {
       type: Number,
       default: 0.0,
@@ -37,14 +31,6 @@ const TransactionSchema = new Schema(
       type: Number,
       default: 0.0,
     },
-    // paySelf: {
-    //   type: Boolean,
-    //   default: false,
-    // },
-    // payOthers: {
-    //   type: Boolean,
-    //   default: false,
-    // },
     status: {
       type: String,
       required: true,

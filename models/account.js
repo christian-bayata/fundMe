@@ -26,15 +26,13 @@ const AccountSchema = new Schema(
       required: true,
       es_indexed: true,
     },
-    balance: {
-      available: {
-        type: Number,
-        default: 0.0,
-      },
-      total: {
-        type: Number,
-        default: 0.0,
-      },
+    available: {
+      type: Number,
+      default: 0.0,
+    },
+    total: {
+      type: Number,
+      default: 0.0,
     },
     user: {
       type: Schema.Types.ObjectId,
