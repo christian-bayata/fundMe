@@ -58,15 +58,64 @@ const fundAccount = async (req, res) => {
       await accountRepository.updateAccount({ $inc: { available: charge.totalAmount, total: charge.totalAmount }, dateOfLastAction: Date.now() }, getOtherAccount._id, { session });
       /* Decrease the sender's money in the account */
       await accountRepository.updateAccount({ $inc: { available: -charge.totalAmount, total: -charge.totalAmount }, dateOfLastAction: Date.now() }, getMyAccount._id, { session });
+      /* Commit the changes made */
+      await session.commitTransaction();
 
       return Response.sendSuccess({ res, statusCode: status.OK, message: "Successfully funded other account", body: createdTransaction });
     }
   } catch (error) {
     console.log(error);
     return Response.sendFatalError({ res });
+  } finally {
+    /* Ending the session */
+    session.endSession();
+  }
+};
+
+const withdrawFromAccount = async (req, res) => {
+  const { user } = res;
+  const { amount } = req.body;
+
+  if (!amount) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Provide the amount" });
+
+  /*  Start mongoose transaction */
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const getAccount = await accountRepository.findAccount({ user: user._id });
+    if (!getAccount) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Account does not exist" });
+
+    const data = {
+      refNo: crypto.randomBytes(5).toString("hex").toUpperCase(),
+      transType: "debit",
+      transDate: Date.now(),
+      amount,
+      user: user._id,
+      account: getAccount._id,
+      status: "success",
+    };
+
+    /* Create the transaction */
+
+    const createdTransaction = await transRepository.withdrawAccount([data], { session });
+
+    /* Update the account schema */
+    await accountRepository.updateAccount({ $inc: { available: -data.amount, total: -data.amount }, dateOfLastAction: Date.now() }, getAccount._id, { session });
+    /* Commit the changes made */
+    await session.commitTransaction();
+
+    return Response.sendSuccess({ res, statusCode: status.OK, message: "Successful withdrawal from account", body: createdTransaction });
+  } catch (error) {
+    console.log(error);
+    return Response.sendFatalError({ res });
+  } finally {
+    /* Ending the session */
+    session.endSession();
   }
 };
 
 module.exports = {
   fundAccount,
+  withdrawFromAccount,
 };
