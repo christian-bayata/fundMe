@@ -8443,3 +8443,7 @@
 {"level":"info","message":"::ffff:127.0.0.1 - - [17/Nov/2022:14:17:25 +0000] \"DELETE /api/user/delete-user/63764275ab08ef2d283fa74b HTTP/1.1\" 404 43 \"-\" \"-\"\n"}
 {"level":"info","message":"::ffff:127.0.0.1 - - [17/Nov/2022:14:17:25 +0000] \"DELETE /api/user/delete-user/63764275ab08ef2d283fa750 HTTP/1.1\" 200 49 \"-\" \"-\"\n"}
 {"level":"info","message":"::ffff:127.0.0.1 - - [17/Nov/2022:14:17:27 +0000] \"GET /health-check HTTP/1.1\" 200 43 \"-\" \"-\"\n"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [17/Nov/2022:14:39:54 +0000] \"POST /api/transaction/fund-user-account HTTP/1.1\" 500 45 \"-\" \"Thunder Client (https://www.thunderclient.com)\"\n"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [17/Nov/2022:14:40:21 +0000] \"POST /api/transaction/fund-user-account HTTP/1.1\" 500 45 \"-\" \"Thunder Client (https://www.thunderclient.com)\"\n"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [17/Nov/2022:14:41:47 +0000] \"POST /api/transaction/fund-user-account HTTP/1.1\" 200 394 \"-\" \"Thunder Client (https://www.thunderclient.com)\"\n"}
+{"level":"info","message":"::ffff:127.0.0.1 - - [17/Nov/2022:14:43:46 +0000] \"POST /api/transaction/fund-user-account HTTP/1.1\" 200 394 \"-\" \"Thunder Client (https://www.thunderclient.com)\"\n"}
