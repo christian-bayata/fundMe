@@ -17,7 +17,32 @@ const resetToken = async (user) => {
   return user.resetPasswordToken;
 };
 
+const calcCharges = ({ accountId, userId, flag, amount }) => {
+  const data = {
+    refNo: crypto.randomBytes(5).toString("hex").toUpperCase(),
+    transType: flag == "my_account" ? "credit" : "debit",
+    transDate: Date.now(),
+    amount,
+    user: userId,
+    account: accountId,
+    status: "success",
+  };
+
+  let overallData;
+
+  /* For every credit amount greater than 10000, subtract charges of 50 */
+  if (data.amount > 10000) {
+    data.charge = 50;
+    overallData = { ...data, totalAmount: +(data.amount - data.charge) };
+  } else {
+    overallData = { ...data, totalAmount: data.amount };
+  }
+
+  return overallData;
+};
+
 module.exports = {
   formatUserData,
   resetToken,
+  calcCharges,
 };

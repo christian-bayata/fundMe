@@ -4,6 +4,6 @@ const transController = require("../controllers/transaction");
 
 const transRouter = Router();
 
-transRouter.post("/fund-my-account", userMiddleware.authenticateUser, transController.fundMyAccount);
+transRouter.post("/fund-user-account", userMiddleware.authenticateUser, transController.fundAccount);
 
 module.exports = transRouter;

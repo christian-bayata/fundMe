@@ -35,7 +35,7 @@ describe("Transaction Controller", () => {
         flag: "my_account",
       };
 
-      const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", "vhjhiu80uigfytuytugvjoiugejvbmgjyiuhewk").send(payload);
+      const response = await request(server).post(`${baseURL}/fund-user-account`).set("authorization", "vhjhiu80uigfytuytugvjoiugejvbmgjyiuhewk").send(payload);
       expect(response.status).toBe(401);
       expect(response.body.message).toMatch(/unauthenticated/i);
     });
@@ -47,7 +47,7 @@ describe("Transaction Controller", () => {
         flag: "my_account",
       };
 
-      const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
+      const response = await request(server).post(`${baseURL}/fund-user-account`).set("authorization", token).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/provide the amount/i);
     });
@@ -58,7 +58,7 @@ describe("Transaction Controller", () => {
         amount: "1000",
       };
 
-      const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
+      const response = await request(server).post(`${baseURL}/fund-user-account`).set("authorization", token).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/provide a flag/i);
     });
@@ -70,7 +70,7 @@ describe("Transaction Controller", () => {
         flag: "some_value",
       };
 
-      const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
+      const response = await request(server).post(`${baseURL}/fund-user-account`).set("authorization", token).send(payload);
       expect(response.status).toBe(400);
       expect(response.body.message).toMatch(/invalid flag/i);
     });
@@ -83,7 +83,7 @@ describe("Transaction Controller", () => {
         flag: "my_account",
       };
 
-      const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
+      const response = await request(server).post(`${baseURL}/fund-user-account`).set("authorization", token).send(payload);
       expect(response.status).toBe(404);
       expect(response.body.message).toMatch(/account does not exist/i);
     });
@@ -115,7 +115,7 @@ describe("Transaction Controller", () => {
         flag: "my_account",
       };
 
-      const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
+      const response = await request(server).post(`${baseURL}/fund-user-account`).set("authorization", token).send(payload);
 
       expect(response.status).toBe(200);
       expect(response.body.message).toMatch(/successfully funded your account/i);
@@ -148,7 +148,7 @@ describe("Transaction Controller", () => {
         flag: "my_account",
       };
 
-      const response = await request(server).post(`${baseURL}/fund-my-account`).set("authorization", token).send(payload);
+      const response = await request(server).post(`${baseURL}/fund-user-account`).set("authorization", token).send(payload);
 
       expect(response.status).toBe(200);
       expect(response.body.message).toMatch(/successfully funded your account/i);
