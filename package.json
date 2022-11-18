@@ -8,6 +8,7 @@
     "test": "export NODE_ENV=test && export PORT=5001 && jest --runInBand --coverage --verbose --forceExit"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.5.0",
     "app-root-path": "^3.1.0",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
@@ -23,10 +24,12 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mongodb": "^4.11.0",
+    "mongoosastic": "^5.0.0",
     "mongoose": "^6.6.7",
     "morgan": "^1.10.0",
     "nodemailer": "^6.8.0",
     "request": "^2.88.2",
+    "sinon": "^14.0.2",
     "swagger-ui-express": "^4.5.0",
     "winston": "^3.8.2"
   },

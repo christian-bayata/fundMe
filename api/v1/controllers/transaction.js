@@ -5,6 +5,7 @@ const transRepository = require("../../../repositories/transaction");
 const status = require("../../../status-code");
 const helper = require("../../../utils/helper");
 const mongoose = require("mongoose");
+const crypto = require("crypto");
 
 const fundAccount = async (req, res) => {
   const { user } = res;
@@ -17,11 +18,11 @@ const fundAccount = async (req, res) => {
   const validFlags = ["my_account", "other_account"];
   if (!validFlags.includes(flag)) return Response.sendError({ res, statusCode: status.BAD_REQUEST, message: "Invalid flag" });
 
-  try {
-    /*  Start mongoose transaction */
-    const session = await mongoose.startSession();
-    session.startTransaction();
+  /*  Start mongoose transaction */
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
+  try {
     if (flag == "my_account") {
       const getAccount = await accountRepository.findAccount({ user: user._id });
       if (!getAccount) return Response.sendError({ res, statusCode: status.NOT_FOUND, message: "Account does not exist" });
@@ -97,11 +98,10 @@ const withdrawFromAccount = async (req, res) => {
     };
 
     /* Create the transaction */
-
-    const createdTransaction = await transRepository.withdrawAccount([data], { session });
-
+    const overallData = { ...data, totalAmount: data.amount };
+    const createdTransaction = await transRepository.withdrawAccount([overallData], { session });
     /* Update the account schema */
-    await accountRepository.updateAccount({ $inc: { available: -data.amount, total: -data.amount }, dateOfLastAction: Date.now() }, getAccount._id, { session });
+    await accountRepository.updateAccount({ $inc: { available: -overallData.amount, total: -overallData.amount }, dateOfLastAction: Date.now() }, getAccount._id, { session });
     /* Commit the changes made */
     await session.commitTransaction();
 

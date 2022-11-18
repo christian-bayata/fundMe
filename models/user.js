@@ -2,6 +2,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const mongoosastic = require("mongoosastic");
 
 const Schema = mongoose.Schema;
 
@@ -65,6 +66,8 @@ UserSchema.pre("save", async function save(next) {
 UserSchema.methods.comparePassword = async function (userPassword) {
   return await bcrypt.compare(userPassword, this.password);
 };
+
+UserSchema.plugin(mongoosastic);
 
 /* Creates the user model */
 const User = mongoose.model("User", UserSchema);

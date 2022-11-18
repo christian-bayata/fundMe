@@ -48,10 +48,24 @@ const deleteAccount = async (data) => {
   return await Account.deleteOne(data);
 };
 
+/**
+ *
+ * @param query
+ * @returns {Promise<void>}
+ */
+const searchAccount = async (query) => {
+  return await Account.search({
+    query_string: {
+      query,
+    },
+  });
+};
+
 module.exports = {
   createAccount,
   findAccount,
   findAccounts,
   updateAccount,
   deleteAccount,
+  searchAccount,
 };

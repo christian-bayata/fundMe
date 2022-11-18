@@ -56,6 +56,18 @@ const deleteUser = async (data) => {
   return await User.deleteOne(data);
 };
 
+/**
+ *
+ * @param query
+ * @returns {Promise<void>}
+ */
+const searchUser = async (query) => {
+  return await User.search({
+    query_string: {
+      query,
+    },
+  });
+};
 module.exports = {
   findUserByEmail,
   createUser,
@@ -63,4 +75,5 @@ module.exports = {
   findUsers,
   updateUser,
   deleteUser,
+  searchUser,
 };
