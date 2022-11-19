@@ -517,3 +517,37 @@ const isAdmin = async (req, res, next) => {
   }
 };
 ```
+
+## Config
+
+Holds all settings for mongoDB database and mongoose connection.
+
+## Connection and Database
+
+> Note: if you use MongoDB make sure mongodb server is running on the machine
+> This two files are the ways to establish a connection to a database.
+> Now simply configure the keys with your credentials from environment variables
+
+```js
+require("dotenv").config();
+const environment = process.env.NODE_ENV || "development";
+let connectionString;
+
+switch (environment) {
+  case "production":
+    // Point the database credentials to the production DB here
+    connectionString = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+    break;
+  case "test":
+    connectionString = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.TEST_DB_NAME}`;
+    break;
+  default:
+    connectionString = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+}
+
+module.exports = connectionString;
+```
+
+To not configure the production code.
+
+To start the DB, add the credentials for production. add `environment variables` by typing e.g. `export DB_USER=yourusername` before starting the api or just include credentials in the env file
