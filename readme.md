@@ -551,3 +551,59 @@ module.exports = connectionString;
 To not configure the production code.
 
 To start the DB, add the credentials for production. add `environment variables` by typing e.g. `export DB_USER=yourusername` before starting the api or just include credentials in the env file
+
+## Routes
+
+Here you define all your routes for your api.
+
+## Create Routes
+
+For further information read the [guide](https://expressjs.com/en/guide/routing.html) of express router.
+
+Example for User Resource:
+
+> Note: Only supported Methods are **POST**, **GET**, **PUT**, and **DELETE**.
+
+user.js
+
+```js
+const { Router } = require("express");
+const userMiddleware = require("../../../middlewares/user");
+const userController = require("../controllers/user");
+
+const userRouter = Router();
+
+userRouter.get("/get-users", userMiddleware.isAdmin, userController.getUsers);
+
+userRouter.patch("/update-user/:id", userMiddleware.authenticateUser, userMiddleware.updateUserValidation, userController.updateUser);
+
+userRouter.delete("/delete-user/:id", userMiddleware.isAdmin, userController.deleteUser);
+
+module.exports = userRouter;
+```
+
+Although individually placed, all routes are eventually combined into one mother-route called 'index.js'.
+index.js
+
+```js
+const { Router } = require("express");
+const authRouter = require("./auth");
+const userRouter = require("./user");
+
+const router = Router();
+
+router.use("/auth", authRouter);
+
+router.use("/user", userRouter);
+
+module.exports = router;
+```
+
+The index route is then exported and required in app.js file
+
+```js
+const router = require("./api/v1/routes/index");
+
+/* Bind app port to index router */
+app.use("/api", router);
+```
