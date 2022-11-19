@@ -66,3 +66,19 @@ then
 $ yarn
 $ yarn start
 ```
+
+## Folder Structure
+
+This codebase has the following directories:
+
+- api - for controllers and routes.
+- config - Settings for mongoDB database and mongoose connection.
+- logger - Winston setup for logs.
+- logs - Output of API logs(winston) are found here.
+- middlewares - All middleware functions for users, accounts and errors.
+- helper - Contains functions to support the controllers
+- models - Database schema definitions, plugins and model creation
+- repositories - Wrappers for database functions (Similar to DAO)
+- tests - Automated tests for the project
+- utils - Functions used often in codebase and tests
+- views - EJS views to be rendered (not used anyways)
