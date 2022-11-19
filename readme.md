@@ -429,3 +429,91 @@ UserSchema.plugin(mongoosastic);
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
 ```
+
+## Middlewares
+
+Middleware are functions that can run before hitting a route.
+
+Example middleware:
+
+Authenticate User - only allow if the user is logged in
+
+> Note: this is not a secure example, only for presentation purposes
+
+```js
+/**
+ * @Responsibility:  Middleware authentication for users
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {*}
+ */
+
+const authenticateUser = async (req, res, next) => {
+  let { authorization } = req.headers;
+  const { userId } = req.body;
+
+  if (!authorization) {
+    authorization = req.body.authorization;
+  }
+
+  // decode jwt token from req header
+  const decode = jwt.verify(authorization, process.env.JWT_SECRET_KEY, (err, decoded) => decoded);
+
+  // if token is invalid or has expired
+  if (!authorization || !decode || !decode._id) {
+    return Response.sendError({ res, statusCode: status.UNAUTHENTICATED, message: "Unauthenticated! Please login" });
+  }
+
+  try {
+    res.user = decode;
+
+    return next();
+  } catch (error) {
+    console.log(error);
+    return Response.sendFatalError({ res });
+  }
+};
+```
+
+The same also goes for authorizing access to routes based on roles and privileges.
+For instance:
+Authorize User Access - only if user is an admin
+
+```js
+/**
+ * @Responsibility:  Middleware authentication for admins
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {*}
+ */
+
+const isAdmin = async (req, res, next) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) {
+    authorization = req.body.authorization;
+  }
+
+  // decode jwt token from req header
+  const decode = jwt.verify(authorization, process.env.JWT_SECRET_KEY, (err, decoded) => decoded);
+
+  // if token is invalid or has expired
+  if (!authorization || !decode || !decode._id) {
+    return Response.sendError({ res, statusCode: status.UNAUTHENTICATED, message: "Unauthenticated! Please login" });
+  }
+
+  try {
+    const getAdmin = decode.isAdmin ? true : false;
+
+    res.admin = getAdmin;
+    return next();
+  } catch (error) {
+    console.log(error);
+    return Response.sendFatalError({ res });
+  }
+};
+```
