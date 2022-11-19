@@ -604,6 +604,9 @@ The index route is then exported and required in app.js file
 ```js
 const router = require("./api/v1/routes/index");
 
+/* Initialize express application */
+const app = express();
+
 /* Bind app port to index router */
 app.use("/api", router);
 ```
