@@ -82,3 +82,94 @@ This codebase has the following directories:
 - tests - Automated tests for the project
 - utils - Functions used often in codebase and tests
 - views - EJS views to be rendered (not used anyways)
+
+## Repositories
+
+### Create a repository
+
+Repositories are wrappers around the models and use dependency injection to take the model as input
+I used [Mongoose](https://mongoosejs.com) as ODM, if you want further information read the [Docs](https://mongoosejs.com/docs/guide.html).
+Example Controller for all **CRUD** operations:
+
+```js
+const User = require("../models/user");
+
+/**
+ *
+ * @param email
+ * @returns {Promise<*>}
+ */
+
+const findUserByEmail = async (email) => {
+  return await User.findOne({ email });
+};
+
+/**
+ *
+ * @param data
+ * @returns {Promise<*>}
+ */
+
+const createUser = async (data) => {
+  return await User.create(data);
+};
+
+/**
+ *
+ * @param data
+ * @returns {Promise<*>}
+ */
+const findUser = async (data) => {
+  return await User.findOne(data);
+};
+
+/**
+ *
+ * @returns {Promise<*>}
+ */
+const findUsers = async () => {
+  return await User.find();
+};
+
+/**
+ *
+ * @param data
+ * @param id
+ * @returns {Promise<void>}
+ */
+const updateUser = async (data, id) => {
+  return await User.findOneAndUpdate({ _id: id }, data, { new: true });
+};
+
+/**
+ *
+ * @param data
+ * @returns {Promise<void>}
+ */
+const deleteUser = async (data) => {
+  return await User.deleteOne(data);
+};
+
+/**
+ *
+ * @param query
+ * @returns {Promise<void>}
+ */
+const searchUser = async (query) => {
+  return await User.search({
+    query_string: {
+      query,
+    },
+  });
+};
+
+module.exports = {
+  findUserByEmail,
+  createUser,
+  findUser,
+  findUsers,
+  updateUser,
+  deleteUser,
+  searchUser,
+};
+```

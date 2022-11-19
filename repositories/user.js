@@ -68,6 +68,7 @@ const searchUser = async (query) => {
     },
   });
 };
+
 module.exports = {
   findUserByEmail,
   createUser,
