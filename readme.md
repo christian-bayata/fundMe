@@ -1,4 +1,4 @@
-# stack-overflow-lite-api
+# fund-me-api
 
 > An API that models basic features of a fintech app, such as user authentication and authorization, user creates account, transfers to other account including theirs, and also withdraw from their accounts. The API was built with Node JS, MongoDB, mongoose and other features like elasticsearch
 
@@ -49,3 +49,20 @@
 - [Test](#test)
   - [Setup](#setup)
 - [yarn Scripts](#yarn-scripts)
+
+## Install and Use
+
+Start by cloning this repository
+
+```sh
+# HTTPS
+$ git clone https://github.com/christian-bayata/fundMe.git
+```
+
+then
+
+```sh
+# cd into project root
+$ yarn
+$ yarn start
+```
