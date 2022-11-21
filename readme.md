@@ -622,35 +622,115 @@ All test for this boilerplate uses [Jest](https://github.com/facebook/jest) and 
 
 To test a Controller we create `requests` to our api routes.
 
-Example `GET /user` from last example with prefix `prefix`:
+The tests cover two areas: Unit and Intergration;
+
+Example of Integration: 
 
 ```js
-const request = require('supertest');
-const {
-  beforeAction,
-  afterAction,
-} = require('../setup/_setup');
+const request = require("supertest");
+const User = require("../../models/user");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
-let api;
+let server;
+let baseURL = "/api/auth";
 
-beforeAll(async () => {
-  api = await beforeAction();
-});
+describe("Auth Controller", () => {
+  beforeAll(() => {
+    server = require("../../server");
+  });
 
-afterAll(() => {
-  afterAction();
-});
+  afterEach(async () => {
+    await User.deleteMany({});
+  });
 
-test('test', async () => {
-  const token = 'this-should-be-a-valid-token';
+  afterAll(async () => {
+    server.close();
+    mongoose.disconnect();
+  });
 
-  const response = await request(server)
-  				.put(`${baseURL}/${testQuestion._id}`)
-  				.set("x-auth-token", token)
-  				.send(payload);
-  			expect(response.status).toEqual(401);
+  describe("Login an already signed up user", () => {
+    it("should fail if user is not already signed up", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user@gmail.com",
+          password: await bcrypt.hash("user_password", 10),
+        },
+      ]);
+
+      const payload = { email: "user11@gmail.com", password: "user_password" };
+
+      const response = await request(server).post(`${baseURL}/login`).send(payload);
+      expect(response.status).toBe(404);
+      expect(response.body.message).toMatch(/Sorry you do not have an account with us/i);
+    });
+
+    it("should fail if password does not match", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user@gmail.com",
+          password: await bcrypt.hash("user_password", 10),
+        },
+      ]);
+
+      const payload = { email: "user@gmail.com", password: "user123_password" };
+
+      const response = await request(server).post(`${baseURL}/login`).send(payload);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toMatch(/Incorrect password/i);
+    });
+
+    it("should succeed if user logs in successfully", async () => {
+      await User.insertMany([
+        {
+          firstName: "user_firstname",
+          lastName: "user_lastname",
+          email: "user@gmail.com",
+          password: await bcrypt.hash("user_password", 10),
+        },
+      ]);
+
+      const payload = { email: "user@gmail.com", password: "user_password" };
+
+      const response = await request(server).post(`${baseURL}/login`).send(payload);
+      expect(response.status).toBe(200);
+      expect(response.body.message).toMatch(/Successfully logged in/i);
+    });
+  });
+})
+```
+
+Exampke of Unit: 
+
+```js 
+require("dotenv").config();
+const mongoose = require("mongoose");
+const User = require("../../models/user");
+const jwt = require("jsonwebtoken");
+
+describe("Generate Auth Token", () => {
+  it("should successfully generate a valid JWT token", async () => {
+    const payload = { _id: mongoose.Types.ObjectId(), email: "user@gmail.com", isAdmin: true };
+    // Create a new user
+    const user = new User(payload);
+    // Generate token
+    const getToken = user.generateJsonWebToken();
+    const decoded = await jwt.verify(getToken, process.env.JWT_SECRET_KEY);
+
+    expect(decoded).toMatchObject(payload);
+  });
 });
 ```
+
+### Models
+
+Models are usually automatically tested in the integration tests as the Controller uses the Models, but you can test them seperately.
+
 <img width="1680" alt="Screenshot 2022-11-21 at 13 50 05" src="https://user-images.githubusercontent.com/80787295/203067296-3372a410-db45-4826-85ac-9f614a656eeb.png">
 
 
