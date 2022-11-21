@@ -610,3 +610,44 @@ const app = express();
 /* Bind app port to index router */
 app.use("/api", router);
 ```
+## Test
+
+All test for this boilerplate uses [Jest](https://github.com/facebook/jest) and [supertest](https://github.com/visionmedia/superagent) for integration testing. So please read their docs on further information.
+
+### Controller
+
+> Note: those request are asynchronous, we use `async await` syntax.
+
+> All controller actions are wrapped in a function to avoid repetitive try...catch syntax
+
+To test a Controller we create `requests` to our api routes.
+
+Example `GET /user` from last example with prefix `prefix`:
+
+```js
+const request = require('supertest');
+const {
+  beforeAction,
+  afterAction,
+} = require('../setup/_setup');
+
+let api;
+
+beforeAll(async () => {
+  api = await beforeAction();
+});
+
+afterAll(() => {
+  afterAction();
+});
+
+test('test', async () => {
+  const token = 'this-should-be-a-valid-token';
+
+  const response = await request(server)
+  				.put(`${baseURL}/${testQuestion._id}`)
+  				.set("x-auth-token", token)
+  				.send(payload);
+  			expect(response.status).toEqual(401);
+});
+```
