@@ -651,6 +651,7 @@ test('test', async () => {
   			expect(response.status).toEqual(401);
 });
 ```
-![Image showing test coverage](https://postimg.cc/K13Ys19x)
+<img width="1680" alt="Screenshot 2022-11-21 at 13 50 05" src="https://user-images.githubusercontent.com/80787295/203067296-3372a410-db45-4826-85ac-9f614a656eeb.png">
+
 
 
