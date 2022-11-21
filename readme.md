@@ -654,4 +654,31 @@ test('test', async () => {
 <img width="1680" alt="Screenshot 2022-11-21 at 13 50 05" src="https://user-images.githubusercontent.com/80787295/203067296-3372a410-db45-4826-85ac-9f614a656eeb.png">
 
 
+## yarn run production
+
+This command:
+
+- sets the **environment variable** to `production`
+- opens the db connection for `production`
+- starts the server on 127.0.0.1 or on 127.0.0.1:PORT_ENV
+
+Before running on any environment you have to set the **environment variables**:
+
+```dotenv
+NODE_ENV=
+DB_HOST=
+DB_PORT=
+DB_NAME=
+TEST_DB_NAME=
+JWT_SECRET_KEY=
+SMTP_USER=
+SMTP_PASSWORD=
+SMTP_FROM_NAME=
+SMTP_FROM_EMAIL=
+SMTP_HOST=
+SMTP_PORT=
+```
+## LICENSE
+
+MIT © Fund Me Api
 
