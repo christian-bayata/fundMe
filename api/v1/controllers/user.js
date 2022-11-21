@@ -96,8 +96,11 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const combineUsers = async (req, res) => {};
+
 module.exports = {
   getUsers,
   updateUser,
   deleteUser,
+  combineUsers,
 };
