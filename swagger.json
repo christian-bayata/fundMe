@@ -4,13 +4,832 @@
     "version": "1.0.0",
     "title": "fund-me",
     "description": "An API that allows users create accounts, fund their accounts, transfer funds to other's accounts, and withdraw funds from their accounts",
+    "contact": {
+      "email": "franksagie1@gmail.com"
+    },
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "host": "localhost:8000",
-  "basePath": "/",
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "authorization",
+      "in": "header"
+    }
+  },
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Create new user account",
+        "operationId": "signup",
+        "description": "Creates a new user account by taking in the firstname, lastname, email and password",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "New User Account",
+            "description": "sign up a new user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userSignup"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login a user",
+        "operationId": "login",
+        "description": "provides a platform for users to login by providing their email and password",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Log into user account",
+            "description": "Logs in an already signed-up user ",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userLogin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Provide user with password reset token when users forget their previously used password",
+        "operationId": "forgot-password",
+        "description": "provides reset token for users",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Forgot user password",
+            "description": "provides reset token for users",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userForgotPassword"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Resets user password after password reset token has been entered",
+        "operationId": "reset-password",
+        "description": "reset password for users",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Reset user password",
+            "description": "reset password for users",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userResetPassword"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/user/get-users?id={id}&flag=all": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Admin - retrieve all users",
+        "operationId": "get-users",
+        "description": "Admin can retrieve all users by passing the query flag - all",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "flag",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/user/get-users?id={id}&flag=single": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Admin - retrieve a single user",
+        "operationId": "get-users",
+        "description": "Admin can retrieve a single user by passing the query flag - single",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "flag",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/user/update-user/{id}": {
+      "patch": {
+        "tags": ["User"],
+        "summary": " Users can update their first name and last name",
+        "operationId": "update-user",
+        "description": "Update an existing user account",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "Admin - update a single user",
+            "description": "update a single user",
+            "schema": {
+              "$ref": "#/definitions/updateUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/user/delete-user/{id}": {
+      "delete": {
+        "tags": ["User"],
+        "summary": "Admin - delete a user",
+        "operationId": "delete-user",
+        "description": "Delete an existing user",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/account/create-account": {
+      "post": {
+        "tags": ["Account"],
+        "summary": "create an account for a user",
+        "operationId": "create-account",
+        "description": "Users can create their accounts - whether savings or current",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "create user account(s)",
+            "description": "create user account(s)",
+            "schema": {
+              "$ref": "#/definitions/createAccount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/account/get-accounts?flag=single&acct_num={acct_num}": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "Admin - Retrieve a single account belonging to a user",
+        "operationId": "get-accounts",
+        "description": "Admin can retrieve the account details of a user by simply passing in th account number of that user",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "flag",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "acct_num",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/account/get-accounts?flag=all": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "Admin - Retrieve all existing users' accounts",
+        "operationId": "get-accounts",
+        "description": "Admin can retrieve the account details of all users",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "flag",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/account/update-accounts/{id}": {
+      "patch": {
+        "tags": ["Account"],
+        "summary": "Admin - Update an existing user's account",
+        "operationId": "update-account",
+        "description": "Admin can update the account details of a user",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "update user account",
+            "description": "update user account",
+            "schema": {
+              "$ref": "#/definitions/updateAccount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/account/delete-account/{id}": {
+      "delete": {
+        "tags": ["Account"],
+        "summary": "Admin - delete user account",
+        "operationId": "delete-account",
+        "description": "Delete an existing user account",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/transaction/fund-user-account": {
+      "post": {
+        "tags": ["Transaction"],
+        "summary": "Transaction details for users to fund their account(s)",
+        "operationId": "fund-user-account",
+        "description": "Fund user's account",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Fund user account",
+            "description": "users can fund their own account(s)",
+            "schema": {
+              "$ref": "#/definitions/fundMyAccount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Unauthenticated"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/transaction/withdraw-user-account": {
+      "post": {
+        "tags": ["Transaction"],
+        "summary": "Transaction details for users to withdraw from their account(s)",
+        "operationId": "withdraw-user-account",
+        "description": "Withdraw from user's account",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "withdraw from user account",
+            "description": "users can withdraw from their own account(s)",
+            "schema": {
+              "$ref": "#/definitions/withdawFromAccount"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Unauthenticated"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/_search?flag=user&query={query}": {
+      "get": {
+        "tags": ["Search"],
+        "summary": "Search for users' with their first name, last name or email",
+        "operationId": "search-users",
+        "description": "search for a user",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "flag",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Unauthenticated"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/accounts/_search?flag=account&query={query}": {
+      "get": {
+        "tags": ["Search"],
+        "summary": "Search for users' accounts with their first name, last name or email",
+        "operationId": "search-accounts",
+        "description": "search for a user's account",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "api_key": ["authorization"]
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "flag",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Unauthenticated"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "userSignUp": {
+      "type": "object",
+      "required": ["firstname", "lastname", "email", "password"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "uniqueItems": true,
+          "format": "email"
+        },
+        "password": {
+          "type": "string",
+          "minLength": 6,
+          "format": "password"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        }
+      }
+    },
+    "userLogin": {
+      "type": "object",
+      "required": ["email", "password"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "uniqueItems": true,
+          "format": "email"
+        },
+        "password": {
+          "type": "string",
+          "minLength": 6,
+          "format": "password"
+        }
+      }
+    },
+    "userForgotPassword": {
+      "type": "object",
+      "required": ["email"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "uniqueItems": true,
+          "format": "email"
+        }
+      }
+    },
+    "updateUser": {
+      "type": "object",
+      "required": ["firstName", "lastName"],
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        }
+      }
+    },
+    "createAccount": {
+      "type": "object",
+      "required": ["name", "email", "type"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "uniqueItems": true,
+          "format": "email"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "updateAccount": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "fundMyAccount": {
+      "type": "object",
+      "required": ["amount", "flag", "accountNum"],
+      "properties": {
+        "amount": {
+          "type": "string"
+        },
+        "flag": {
+          "type": "string"
+        },
+        "accountNum": {
+          "type": "string"
+        }
+      }
+    },
+    "withdrawfromAccount": {
+      "type": "object",
+      "required": ["amount"],
+      "properties": {
+        "amount": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "host": "localhost:5000",
+  "basePath": "/api/",
   "schemes": ["http"],
   "consumes": ["application/json"],
   "produces": ["application/json"]
