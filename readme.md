@@ -625,11 +625,7 @@ To test a Controller we create `requests` to our api routes.
 
 The tests cover two areas: Unit and Intergration;
 
-<<<<<<< HEAD
 Example of Integration:
-=======
-Example of Integration: 
->>>>>>> 6ea3c61f42f5a85bd1acd895e6fadd05e0fbb0d9
 
 ```js
 const request = require("supertest");
@@ -710,13 +706,15 @@ describe("Auth Controller", () => {
 <<<<<<< HEAD
 });
 ```
+
 =======
 })
-```
 
-Exampke of Unit: 
+````
 
-```js 
+Exampke of Unit:
+
+```js
 require("dotenv").config();
 const mongoose = require("mongoose");
 const User = require("../../models/user");
@@ -734,7 +732,7 @@ describe("Generate Auth Token", () => {
     expect(decoded).toMatchObject(payload);
   });
 });
-```
+````
 
 ### Models
 
