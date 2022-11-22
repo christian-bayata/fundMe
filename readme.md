@@ -625,7 +625,11 @@ To test a Controller we create `requests` to our api routes.
 
 The tests cover two areas: Unit and Intergration;
 
+<<<<<<< HEAD
 Example of Integration:
+=======
+Example of Integration: 
+>>>>>>> 6ea3c61f42f5a85bd1acd895e6fadd05e0fbb0d9
 
 ```js
 const request = require("supertest");
@@ -703,8 +707,41 @@ describe("Auth Controller", () => {
       expect(response.body.message).toMatch(/Successfully logged in/i);
     });
   });
+<<<<<<< HEAD
 });
 ```
+=======
+})
+```
+
+Exampke of Unit: 
+
+```js 
+require("dotenv").config();
+const mongoose = require("mongoose");
+const User = require("../../models/user");
+const jwt = require("jsonwebtoken");
+
+describe("Generate Auth Token", () => {
+  it("should successfully generate a valid JWT token", async () => {
+    const payload = { _id: mongoose.Types.ObjectId(), email: "user@gmail.com", isAdmin: true };
+    // Create a new user
+    const user = new User(payload);
+    // Generate token
+    const getToken = user.generateJsonWebToken();
+    const decoded = await jwt.verify(getToken, process.env.JWT_SECRET_KEY);
+
+    expect(decoded).toMatchObject(payload);
+  });
+});
+```
+
+### Models
+
+Models are usually automatically tested in the integration tests as the Controller uses the Models, but you can test them seperately.
+
+<img width="1680" alt="Screenshot 2022-11-21 at 13 50 05" src="https://user-images.githubusercontent.com/80787295/203067296-3372a410-db45-4826-85ac-9f614a656eeb.png">
+>>>>>>> 6ea3c61f42f5a85bd1acd895e6fadd05e0fbb0d9
 
 Exampke of Unit:
 
