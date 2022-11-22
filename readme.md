@@ -22,7 +22,7 @@
 - Background operations are run on [fund-me-background-service](https://github.com/christian-bayata/fundMe.git). Btw it is a public repo and is easily accessible.
 - Uses [MongoDB](https://www.mongodb.com) as database.
 - [Mongoose](https://mongoosejs.com) as object document model
-- Environments for `development`, `testing`, and `production`
+- Environments for `development`, `test`, and `production`
 - Unit and Integration tests running with [Jest](https://github.com/facebook/jest)
 - Built with [yarn scripts](#npm-scripts)
 - Uses [Elastic Search](https://www.elastic.co/products/elasticsearch) for search operations
