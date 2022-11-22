@@ -756,8 +756,6 @@ This command:
 - runs `jest --runInBand --coverage --verbose --forceExit` for testing with [Jest](https://github.com/facebook/jest) and the coverage
 - drops the `test database` after the test
 
-![Image showing test coverage](https://postimg.cc/K13Ys19x)
-
 ## yarn run production
 
 This command:
